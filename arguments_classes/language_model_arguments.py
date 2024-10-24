@@ -64,7 +64,7 @@ class LanguageModelHandlerArguments:
         },
     )
     chat_size: int = field(
-        default=2,
+        default=50,
         metadata={
             "help": "Number of interactions assitant-user to keep for the chat. None for no limitations."
         },

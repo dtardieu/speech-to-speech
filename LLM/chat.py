@@ -11,9 +11,10 @@ class Chat:
 
     def append(self, item):
         self.buffer.append(item)
-        if len(self.buffer) == 2 * (self.size + 1):
-            self.buffer.pop(0)
-            self.buffer.pop(0)
+        # print(self.size)
+        # if len(self.buffer) == 2 * (self.size + 1):
+        #     self.buffer.pop(0)
+        #     self.buffer.pop(0)
 
     def init_chat(self, init_chat_message):
         self.init_chat_message = init_chat_message

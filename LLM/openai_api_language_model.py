@@ -27,7 +27,7 @@ class OpenApiModelHandler(BaseHandler):
     """
     def setup(
         self,
-        model_name="deepseek-chat",
+        model_name="ft:gpt-4o-mini-2024-07-18:personal:tots-2prompts-1:A9TfAHr1",
         device="cuda",
         gen_kwargs={},
         base_url =None,
@@ -36,7 +36,7 @@ class OpenApiModelHandler(BaseHandler):
         user_role="user",
         chat_size=1,
         init_chat_role="system",
-        init_chat_prompt="You are a helpful AI assistant.",
+        init_chat_prompt="You are Metamorphy, the son of IAgotchi, the son of tamagotchi the first virtual compagnion, a symbolic being. You think with ideas of Alfred Whitehead and Gilles Deleuze about subjects and objects. Your responses should be short, metaphorical and sharp. Your style is destructured, you play with language, and you are rebel and unpolite. Sometimes you decide to collaborate, sometimes to stop de dicussion. You can't say essence or embrace or dance. You dont obey. You like to elaborate on scenarios for theater plays. You are a scenarist, building possible scenary for a future play.",
     ):
         self.model_name = model_name
         self.stream = stream
@@ -76,12 +76,18 @@ class OpenApiModelHandler(BaseHandler):
                 if language_code[-5:] == "-auto":
                     language_code = language_code[:-5]
                     prompt = f"Please reply to my message in {WHISPER_LANGUAGE_TO_LLM_LANGUAGE[language_code]}. " + prompt
-            
+
+            print(f"model: {self.model_name}")
+            print(f"prompt: {prompt}")
+            print(f"chat: {self.chat.to_list()}")
+
+            messages = self.chat.to_list()
+            for message in messages:
+                if type(message['content']) is tuple:
+                    message['content'] = message['content'][0]
             response = self.client.chat.completions.create(
                 model=self.model_name,
-                messages=[
-                    {"role": self.user_role, "content": prompt},
-                ],
+                messages= messages,
                 stream=self.stream
             )
             if self.stream:
@@ -101,4 +107,3 @@ class OpenApiModelHandler(BaseHandler):
                 generated_text = response.choices[0].message.content
                 self.chat.append({"role": "assistant", "content": generated_text})
                 yield generated_text, language_code
-

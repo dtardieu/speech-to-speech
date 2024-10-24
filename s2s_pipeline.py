@@ -122,7 +122,7 @@ def optimal_mac_settings(mac_optimal_settings: Optional[str], *handler_kwargs):
             if hasattr(kwargs, "stt"):
                 kwargs.stt = "whisper-mlx"
             if hasattr(kwargs, "llm"):
-                kwargs.llm = "mlx-lm"
+                kwargs.llm = "open_api"
             if hasattr(kwargs, "tts"):
                 kwargs.tts = "melo"
 
@@ -323,10 +323,10 @@ def get_stt_handler(module_kwargs, stop_event, spoken_prompt_queue, text_prompt_
 
 
 def get_llm_handler(
-    module_kwargs, 
-    stop_event, 
-    text_prompt_queue, 
-    lm_response_queue, 
+    module_kwargs,
+    stop_event,
+    text_prompt_queue,
+    lm_response_queue,
     language_model_handler_kwargs,
     open_api_language_model_handler_kwargs,
     mlx_language_model_handler_kwargs
