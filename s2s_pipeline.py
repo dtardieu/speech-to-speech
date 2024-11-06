@@ -25,6 +25,8 @@ from arguments_classes.faster_whisper_stt_arguments import (
 )
 from arguments_classes.melo_tts_arguments import MeloTTSHandlerArguments
 from arguments_classes.open_api_language_model_arguments import OpenApiLanguageModelHandlerArguments
+from arguments_classes.pulsochat_language_model_arguments import PulsochatLanguageModelHandlerArguments
+
 from arguments_classes.facebookmms_tts_arguments import FacebookMMSTTSHandlerArguments
 import torch
 import nltk
@@ -83,6 +85,7 @@ def parse_arguments():
             FasterWhisperSTTHandlerArguments,
             LanguageModelHandlerArguments,
             OpenApiLanguageModelHandlerArguments,
+            PulsochatLanguageModelHandlerArguments,
             MLXLanguageModelHandlerArguments,
             ParlerTTSHandlerArguments,
             MeloTTSHandlerArguments,
@@ -172,6 +175,7 @@ def prepare_all_args(
     faster_whisper_stt_handler_kwargs,
     language_model_handler_kwargs,
     open_api_language_model_handler_kwargs,
+    pulsochat_language_model_handler_kwargs,
     mlx_language_model_handler_kwargs,
     parler_tts_handler_kwargs,
     melo_tts_handler_kwargs,
@@ -185,6 +189,7 @@ def prepare_all_args(
         paraformer_stt_handler_kwargs,
         language_model_handler_kwargs,
         open_api_language_model_handler_kwargs,
+        pulsochat_language_model_handler_kwargs,
         mlx_language_model_handler_kwargs,
         parler_tts_handler_kwargs,
         melo_tts_handler_kwargs,
@@ -198,6 +203,7 @@ def prepare_all_args(
     rename_args(language_model_handler_kwargs, "lm")
     rename_args(mlx_language_model_handler_kwargs, "mlx_lm")
     rename_args(open_api_language_model_handler_kwargs, "open_api")
+    rename_args(pulsochat_language_model_handler_kwargs, "pulsochat")
     rename_args(parler_tts_handler_kwargs, "tts")
     rename_args(melo_tts_handler_kwargs, "melo")
     rename_args(chat_tts_handler_kwargs, "chat_tts")
@@ -226,6 +232,7 @@ def build_pipeline(
     paraformer_stt_handler_kwargs,
     language_model_handler_kwargs,
     open_api_language_model_handler_kwargs,
+    pulsochat_language_model_handler_kwargs,
     mlx_language_model_handler_kwargs,
     parler_tts_handler_kwargs,
     melo_tts_handler_kwargs,
@@ -278,7 +285,7 @@ def build_pipeline(
     )
 
     stt = get_stt_handler(module_kwargs, stop_event, spoken_prompt_queue, text_prompt_queue, whisper_stt_handler_kwargs, faster_whisper_stt_handler_kwargs, paraformer_stt_handler_kwargs)
-    lm = get_llm_handler(module_kwargs, stop_event, text_prompt_queue, lm_response_queue, language_model_handler_kwargs, open_api_language_model_handler_kwargs, mlx_language_model_handler_kwargs)
+    lm = get_llm_handler(module_kwargs, stop_event, text_prompt_queue, lm_response_queue, language_model_handler_kwargs, open_api_language_model_handler_kwargs, pulsochat_language_model_handler_kwargs, mlx_language_model_handler_kwargs)
     tts = get_tts_handler(module_kwargs, stop_event, lm_response_queue, send_audio_chunks_queue, should_listen, parler_tts_handler_kwargs, melo_tts_handler_kwargs, chat_tts_handler_kwargs, facebook_mms_tts_handler_kwargs)
 
     return ThreadManager([*comms_handlers, vad, stt, lm, tts])
@@ -323,12 +330,13 @@ def get_stt_handler(module_kwargs, stop_event, spoken_prompt_queue, text_prompt_
 
 
 def get_llm_handler(
-    module_kwargs, 
-    stop_event, 
-    text_prompt_queue, 
-    lm_response_queue, 
+    module_kwargs,
+    stop_event,
+    text_prompt_queue,
+    lm_response_queue,
     language_model_handler_kwargs,
     open_api_language_model_handler_kwargs,
+    pulsochat_language_model_handler_kwargs,
     mlx_language_model_handler_kwargs
 ):
     if module_kwargs.llm == "transformers":
@@ -347,7 +355,14 @@ def get_llm_handler(
             queue_out=lm_response_queue,
             setup_kwargs=vars(open_api_language_model_handler_kwargs),
         )
-
+    elif module_kwargs.llm == "pulsochat":
+        from LLM.pulsochat_language_model import PulsochatModelHandler
+        return PulsochatModelHandler(
+            stop_event,
+            queue_in=text_prompt_queue,
+            queue_out=lm_response_queue,
+            setup_kwargs=vars(pulsochat_language_model_handler_kwargs),
+        )
     elif module_kwargs.llm == "mlx-lm":
         from LLM.mlx_language_model import MLXLanguageModelHandler
         return MLXLanguageModelHandler(
@@ -423,6 +438,7 @@ def main():
         faster_whisper_stt_handler_kwargs,  # Add this line
         language_model_handler_kwargs,
         open_api_language_model_handler_kwargs,
+        pulsochat_language_model_handler_kwargs,
         mlx_language_model_handler_kwargs,
         parler_tts_handler_kwargs,
         melo_tts_handler_kwargs,
@@ -439,6 +455,7 @@ def main():
         faster_whisper_stt_handler_kwargs,  # Add this line
         language_model_handler_kwargs,
         open_api_language_model_handler_kwargs,
+        pulsochat_language_model_handler_kwargs,
         mlx_language_model_handler_kwargs,
         parler_tts_handler_kwargs,
         melo_tts_handler_kwargs,
@@ -458,6 +475,7 @@ def main():
         paraformer_stt_handler_kwargs,
         language_model_handler_kwargs,
         open_api_language_model_handler_kwargs,
+        pulsochat_language_model_handler_kwargs,
         mlx_language_model_handler_kwargs,
         parler_tts_handler_kwargs,
         melo_tts_handler_kwargs,
