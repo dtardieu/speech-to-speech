@@ -1,0 +1,1 @@
+ python s2s_pipeline.py --device mps --mode socket --stt whisper-mlx --llm pulsochat --tts melo --pulsochat_config_file ./pulsochat/config.json --min_speech_ms 250 --send_host 192.168.1.14 --recv_host 192.168.1.14 --recv_port 12347 --send_port 12348
