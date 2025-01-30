@@ -44,3 +44,33 @@ class ModuleArguments:
             "help": "Provide logging level. Example --log_level debug, default=info."
         },
     )
+    enable_osc: bool = field(
+        default=False,
+        metadata={
+            "help": "Enable OSC communications"
+        },
+    )
+    osc_send_address: str = field(
+        default="127.0.0.1",
+        metadata={
+            "help": "The address to send OSC messages to."
+        },
+    )
+    osc_send_port: int = field(
+        default=8000,
+        metadata={
+            "help": "The port that sends OSC messages."
+        },
+    )
+    osc_receive_address: str = field(
+        default="127.0.0.1",
+        metadata={
+            "help": "The address to receive OSC messages from."
+        },
+    )
+    osc_receive_port: int = field(
+        default=9000,
+        metadata={
+            "help": "The port that receives OSC messages."
+        },
+    )

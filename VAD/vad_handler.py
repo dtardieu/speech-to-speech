@@ -43,6 +43,7 @@ class VADHandler(BaseHandler):
             sampling_rate=sample_rate,
             min_silence_duration_ms=min_silence_ms,
             speech_pad_ms=speech_pad_ms,
+            osc_client = self.osc_client
         )
         self.audio_enhancement = audio_enhancement
         if audio_enhancement:

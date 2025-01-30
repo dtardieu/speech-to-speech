@@ -13,12 +13,19 @@ class BaseHandler:
     The cleanup method handles stopping the handler, and b"END" is placed in the output queue.
     """
 
-    def __init__(self, stop_event, queue_in, queue_out, setup_args=(), setup_kwargs={}):
+    def __init__(self, stop_event, queue_in, queue_out, osc_client=None, osc_server=None, setup_args=(), setup_kwargs={}):
         self.stop_event = stop_event
         self.queue_in = queue_in
         self.queue_out = queue_out
+        self.osc_client = osc_client
+        self.osc_server = osc_server
         self.setup(*setup_args, **setup_kwargs)
         self._times = []
+
+        # Start OSC server if provided
+        if self.osc_server:
+            logger.info(f"{self.__class__.__name__}: Starting OSC server...")
+            self.osc_server.start_server()
 
     def setup(self):
         pass
@@ -47,10 +54,23 @@ class BaseHandler:
     @property
     def last_time(self):
         return self._times[-1]
-    
+
     @property
     def min_time_to_debug(self):
         return 0.001
 
     def cleanup(self):
+        logger.info(f"{self.__class__.__name__}: Cleaning up...")
+        if self.osc_server:
+            self.osc_server.stop_server()
         pass
+
+    def send_osc_message(self, address, message):
+        """
+        Send a message using the OSC client, if available.
+        :param address: OSC address.
+        :param message: Message to send.
+        """
+        if self.osc_client:
+            logger.debug(f"{self.__class__.__name__}: Sending OSC message to {address}: {message}")
+            self.osc_client.send_message(address, message)

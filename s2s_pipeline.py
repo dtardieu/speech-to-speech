@@ -276,12 +276,24 @@ def build_pipeline(
             ),
         ]
 
+
+    osc_client = None
+    osc_server = None
+    if module_kwargs.enable_osc:
+        from OSC.osc_client import OSCClient
+        from OSC.osc_server import OSCServer
+        # Create OSC server and client
+        osc_client = OSCClient(module_kwargs.osc_send_address, module_kwargs.osc_send_port)
+        osc_server = OSCServer(module_kwargs.osc_receive_address, module_kwargs.osc_receive_port)
+
     vad = VADHandler(
         stop_event,
         queue_in=recv_audio_chunks_queue,
         queue_out=spoken_prompt_queue,
         setup_args=(should_listen,),
         setup_kwargs=vars(vad_handler_kwargs),
+        osc_client = osc_client,
+        osc_server = osc_server
     )
 
     stt = get_stt_handler(module_kwargs, stop_event, spoken_prompt_queue, text_prompt_queue, whisper_stt_handler_kwargs, faster_whisper_stt_handler_kwargs, paraformer_stt_handler_kwargs)
@@ -337,7 +349,9 @@ def get_llm_handler(
     language_model_handler_kwargs,
     open_api_language_model_handler_kwargs,
     pulsochat_language_model_handler_kwargs,
-    mlx_language_model_handler_kwargs
+    mlx_language_model_handler_kwargs,
+    osc_client = None,
+    osc_server = None
 ):
     if module_kwargs.llm == "transformers":
         from LLM.language_model import LanguageModelHandler
@@ -361,6 +375,8 @@ def get_llm_handler(
             stop_event,
             queue_in=text_prompt_queue,
             queue_out=lm_response_queue,
+            osc_client=osc_client,
+            osc_server=osc_server,
             setup_kwargs=vars(pulsochat_language_model_handler_kwargs),
         )
     elif module_kwargs.llm == "mlx-lm":

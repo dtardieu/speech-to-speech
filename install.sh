@@ -14,7 +14,7 @@ brew install mecab
 git submodule init
 git submodule update
 
-virtualenv venv
+virtualenv --python="/opt/homebrew/bin/python3.12" venv
 source venv/bin/activate
 
 pip install -r requirements_mac.txt
