@@ -9,6 +9,7 @@ class VADIterator:
         sampling_rate: int = 16000,
         min_silence_duration_ms: int = 100,
         speech_pad_ms: int = 30,
+        osc_client = None
     ):
         """
         Mainly taken from https://github.com/snakers4/silero-vad
@@ -37,6 +38,7 @@ class VADIterator:
         self.sampling_rate = sampling_rate
         self.is_speaking = False
         self.buffer = []
+        self.osc_client = osc_client
 
         if sampling_rate not in [8000, 16000]:
             raise ValueError(
@@ -78,6 +80,9 @@ class VADIterator:
             self.temp_end = 0
 
         if (speech_prob >= self.threshold) and not self.triggered:
+            if self.osc_client:
+                self.osc_client.send_message("/vad_handler/speech_detected", "start")
+            print("------------------- start of speech detected ----------------")
             self.triggered = True
             return None
 
@@ -88,6 +93,9 @@ class VADIterator:
                 return None
             else:
                 # end of speak
+                if self.osc_client:
+                    self.osc_client.send_message("/vad_handler/speech_detected", "stop")
+                print("------------------- end of speech detected ----------------")
                 self.temp_end = 0
                 self.triggered = False
                 spoken_utterance = self.buffer

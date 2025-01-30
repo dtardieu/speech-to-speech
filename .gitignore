@@ -1,3 +1,6 @@
 __pycache__
 tmp
 cache
+.DS_Store
+*.txt
+/mlx_models

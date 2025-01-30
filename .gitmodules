@@ -1,0 +1,6 @@
+[submodule "pulso-chat"]
+	path = pulso-chat
+	url = git@github.com:dtardieu/pulso-chat.git
+[submodule "pulsochat"]
+	path = pulsochat
+	url = git@github.com:dtardieu/pulsochat.git
