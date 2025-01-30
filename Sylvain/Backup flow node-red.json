@@ -1,0 +1,691 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2709
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 [\
+    \{\
+        "id": "d750b49a.da687",\
+        "type": "tab",\
+        "label": "OSC Example",\
+        "disabled": false,\
+        "info": ""\
+    \},\
+    \{\
+        "id": "fdbbf9bc42684db3",\
+        "type": "exec",\
+        "z": "d750b49a.da687",\
+        "command": "bash",\
+        "addpay": "",\
+        "append": "-c \\"cd /Users/damientardieu/src/speech-to-speech && source venv/bin/activate && python s2s_pipeline.py --device mps --mode socket --stt whisper-mlx --llm pulsochat --tts melo --pulsochat_config_file ./pulsochat/config.json --min_speech_ms 250 --send_host localhost --recv_host localhost --recv_port 10001 --send_port 10002\\"",\
+        "useSpawn": "true",\
+        "timer": "",\
+        "winHide": false,\
+        "oldrc": false,\
+        "name": "run s2spipeline for phone1",\
+        "x": 520,\
+        "y": 720,\
+        "wires": [\
+            [],\
+            [\
+                "93f034865f37ef9f"\
+            ],\
+            []\
+        ]\
+    \},\
+    \{\
+        "id": "cff5ea1eea36aa22",\
+        "type": "ui_button",\
+        "z": "d750b49a.da687",\
+        "name": "",\
+        "group": "163571c0650ee235",\
+        "order": 1,\
+        "width": 0,\
+        "height": 0,\
+        "passthru": false,\
+        "label": "Launch Conversation Server For Phone 1",\
+        "tooltip": "",\
+        "color": "",\
+        "bgcolor": "",\
+        "className": "",\
+        "icon": "",\
+        "payload": "",\
+        "payloadType": "str",\
+        "topic": "",\
+        "topicType": "str",\
+        "x": 200,\
+        "y": 720,\
+        "wires": [\
+            [\
+                "fdbbf9bc42684db3"\
+            ]\
+        ]\
+    \},\
+    \{\
+        "id": "93f034865f37ef9f",\
+        "type": "ui_template",\
+        "z": "d750b49a.da687",\
+        "group": "163571c0650ee235",\
+        "name": "",\
+        "order": 2,\
+        "width": 0,\
+        "height": 0,\
+        "format": "<div ng-bind-html=\\"msg.payload\\"></div>",\
+        "storeOutMessages": true,\
+        "fwdInMessages": true,\
+        "resendOnRefresh": true,\
+        "templateScope": "local",\
+        "className": "",\
+        "x": 740,\
+        "y": 720,\
+        "wires": [\
+            []\
+        ]\
+    \},\
+    \{\
+        "id": "670f93fb412afc8c",\
+        "type": "exec",\
+        "z": "d750b49a.da687",\
+        "command": "bash",\
+        "addpay": "",\
+        "append": "-c \\"cd /Users/damientardieu/src/speech-to-speech && source venv/bin/activate && python /Users/damientardieu/src/speech-to-speech/Sylvain/listen_and_play_route.py --recv_port 10002 --send_port 10001 --input_device_index 0 --input_channel 0 --output_device_index 3 --output_channel 0\\"",\
+        "useSpawn": "true",\
+        "timer": "",\
+        "winHide": false,\
+        "oldrc": false,\
+        "name": "run listen and play for phone1",\
+        "x": 530,\
+        "y": 780,\
+        "wires": [\
+            [\
+                "a7f5941fb68efbee"\
+            ],\
+            [\
+                "af761116c2dbfbb7",\
+                "f5b2b9c4bd913041"\
+            ],\
+            [\
+                "fd07ef2550a74ca9"\
+            ]\
+        ]\
+    \},\
+    \{\
+        "id": "68b778139ab342ef",\
+        "type": "ui_button",\
+        "z": "d750b49a.da687",\
+        "name": "",\
+        "group": "163571c0650ee235",\
+        "order": 3,\
+        "width": 0,\
+        "height": 0,\
+        "passthru": false,\
+        "label": "Launch Audio Server For Phone 1",\
+        "tooltip": "",\
+        "color": "",\
+        "bgcolor": "",\
+        "className": "",\
+        "icon": "",\
+        "payload": "",\
+        "payloadType": "str",\
+        "topic": "",\
+        "topicType": "str",\
+        "x": 180,\
+        "y": 780,\
+        "wires": [\
+            [\
+                "670f93fb412afc8c"\
+            ]\
+        ]\
+    \},\
+    \{\
+        "id": "a7f5941fb68efbee",\
+        "type": "ui_template",\
+        "z": "d750b49a.da687",\
+        "group": "163571c0650ee235",\
+        "name": "",\
+        "order": 4,\
+        "width": 0,\
+        "height": 0,\
+        "format": "<div ng-bind-html=\\"msg.payload\\"></div>",\
+        "storeOutMessages": true,\
+        "fwdInMessages": true,\
+        "resendOnRefresh": true,\
+        "templateScope": "local",\
+        "className": "",\
+        "x": 780,\
+        "y": 880,\
+        "wires": [\
+            []\
+        ]\
+    \},\
+    \{\
+        "id": "f5b2b9c4bd913041",\
+        "type": "debug",\
+        "z": "d750b49a.da687",\
+        "name": "debug 1",\
+        "active": true,\
+        "tosidebar": true,\
+        "console": false,\
+        "tostatus": false,\
+        "complete": "false",\
+        "statusVal": "",\
+        "statusType": "auto",\
+        "x": 780,\
+        "y": 760,\
+        "wires": []\
+    \},\
+    \{\
+        "id": "af761116c2dbfbb7",\
+        "type": "debug",\
+        "z": "d750b49a.da687",\
+        "name": "debug 2",\
+        "active": true,\
+        "tosidebar": true,\
+        "console": false,\
+        "tostatus": false,\
+        "complete": "false",\
+        "statusVal": "",\
+        "statusType": "auto",\
+        "x": 780,\
+        "y": 800,\
+        "wires": []\
+    \},\
+    \{\
+        "id": "fd07ef2550a74ca9",\
+        "type": "debug",\
+        "z": "d750b49a.da687",\
+        "name": "debug 3",\
+        "active": true,\
+        "tosidebar": true,\
+        "console": false,\
+        "tostatus": false,\
+        "complete": "false",\
+        "statusVal": "",\
+        "statusType": "auto",\
+        "x": 780,\
+        "y": 840,\
+        "wires": []\
+    \},\
+    \{\
+        "id": "a5482549a01f5332",\
+        "type": "exec",\
+        "z": "d750b49a.da687",\
+        "command": "bash",\
+        "addpay": "",\
+        "append": "-c \\"cd /Users/damientardieu/src/speech-to-speech && source venv/bin/activate && python s2s_pipeline.py --device mps --mode socket --stt whisper-mlx --llm pulsochat --tts melo --pulsochat_config_file ./pulsochat/config.json --min_speech_ms 250 --send_host localhost --recv_host localhost --recv_port 20001 --send_port 20002\\"",\
+        "useSpawn": "true",\
+        "timer": "",\
+        "winHide": false,\
+        "oldrc": false,\
+        "name": "run s2spipeline for phone2",\
+        "x": 480,\
+        "y": 960,\
+        "wires": [\
+            [],\
+            [\
+                "ac5793274b5de7ee"\
+            ],\
+            []\
+        ]\
+    \},\
+    \{\
+        "id": "5f1176c48e77168e",\
+        "type": "ui_button",\
+        "z": "d750b49a.da687",\
+        "name": "",\
+        "group": "163571c0650ee235",\
+        "order": 5,\
+        "width": 0,\
+        "height": 0,\
+        "passthru": false,\
+        "label": "Launch Conversation Server For Phone 2",\
+        "tooltip": "",\
+        "color": "",\
+        "bgcolor": "",\
+        "className": "",\
+        "icon": "",\
+        "payload": "",\
+        "payloadType": "str",\
+        "topic": "",\
+        "topicType": "str",\
+        "x": 160,\
+        "y": 960,\
+        "wires": [\
+            [\
+                "a5482549a01f5332"\
+            ]\
+        ]\
+    \},\
+    \{\
+        "id": "ac5793274b5de7ee",\
+        "type": "ui_template",\
+        "z": "d750b49a.da687",\
+        "group": "163571c0650ee235",\
+        "name": "",\
+        "order": 6,\
+        "width": 0,\
+        "height": 0,\
+        "format": "<div ng-bind-html=\\"msg.payload\\"></div>",\
+        "storeOutMessages": true,\
+        "fwdInMessages": true,\
+        "resendOnRefresh": true,\
+        "templateScope": "local",\
+        "className": "",\
+        "x": 700,\
+        "y": 960,\
+        "wires": [\
+            []\
+        ]\
+    \},\
+    \{\
+        "id": "21dd2a695846d101",\
+        "type": "exec",\
+        "z": "d750b49a.da687",\
+        "command": "bash",\
+        "addpay": "",\
+        "append": "-c \\"cd /Users/damientardieu/src/speech-to-speech && source venv/bin/activate && python /Users/damientardieu/src/speech-to-speech/Sylvain/listen_and_play_route.py --recv_port 20002 --send_port 20001 --input_device_index 1 --input_channel 0 --output_device_index 3 --output_channel 2\\"",\
+        "useSpawn": "true",\
+        "timer": "",\
+        "winHide": false,\
+        "oldrc": false,\
+        "name": "run listen and play for phone2",\
+        "x": 490,\
+        "y": 1020,\
+        "wires": [\
+            [\
+                "4cd4a3a7877d420b"\
+            ],\
+            [\
+                "91e948acb89466fd",\
+                "5ffcc0b58b558931"\
+            ],\
+            [\
+                "414960e6694c81ae"\
+            ]\
+        ]\
+    \},\
+    \{\
+        "id": "1c2347cf21488237",\
+        "type": "ui_button",\
+        "z": "d750b49a.da687",\
+        "name": "",\
+        "group": "163571c0650ee235",\
+        "order": 7,\
+        "width": 0,\
+        "height": 0,\
+        "passthru": false,\
+        "label": "Launch Audio Server For Phone 2",\
+        "tooltip": "",\
+        "color": "",\
+        "bgcolor": "",\
+        "className": "",\
+        "icon": "",\
+        "payload": "",\
+        "payloadType": "str",\
+        "topic": "",\
+        "topicType": "str",\
+        "x": 140,\
+        "y": 1020,\
+        "wires": [\
+            [\
+                "21dd2a695846d101"\
+            ]\
+        ]\
+    \},\
+    \{\
+        "id": "4cd4a3a7877d420b",\
+        "type": "ui_template",\
+        "z": "d750b49a.da687",\
+        "group": "163571c0650ee235",\
+        "name": "",\
+        "order": 8,\
+        "width": 0,\
+        "height": 0,\
+        "format": "<div ng-bind-html=\\"msg.payload\\"></div>",\
+        "storeOutMessages": true,\
+        "fwdInMessages": true,\
+        "resendOnRefresh": true,\
+        "templateScope": "local",\
+        "className": "",\
+        "x": 760,\
+        "y": 1120,\
+        "wires": [\
+            []\
+        ]\
+    \},\
+    \{\
+        "id": "5ffcc0b58b558931",\
+        "type": "debug",\
+        "z": "d750b49a.da687",\
+        "name": "debug 4",\
+        "active": true,\
+        "tosidebar": true,\
+        "console": false,\
+        "tostatus": false,\
+        "complete": "false",\
+        "statusVal": "",\
+        "statusType": "auto",\
+        "x": 740,\
+        "y": 1000,\
+        "wires": []\
+    \},\
+    \{\
+        "id": "91e948acb89466fd",\
+        "type": "debug",\
+        "z": "d750b49a.da687",\
+        "name": "debug 5",\
+        "active": true,\
+        "tosidebar": true,\
+        "console": false,\
+        "tostatus": false,\
+        "complete": "false",\
+        "statusVal": "",\
+        "statusType": "auto",\
+        "x": 740,\
+        "y": 1040,\
+        "wires": []\
+    \},\
+    \{\
+        "id": "414960e6694c81ae",\
+        "type": "debug",\
+        "z": "d750b49a.da687",\
+        "name": "debug 6",\
+        "active": true,\
+        "tosidebar": true,\
+        "console": false,\
+        "tostatus": false,\
+        "complete": "false",\
+        "statusVal": "",\
+        "statusType": "auto",\
+        "x": 740,\
+        "y": 1080,\
+        "wires": []\
+    \},\
+    \{\
+        "id": "d5d90b84ab801e1c",\
+        "type": "exec",\
+        "z": "d750b49a.da687",\
+        "command": "bash",\
+        "addpay": "",\
+        "append": "-c \\"cd /Users/damientardieu/src/speech-to-speech && source venv/bin/activate && python s2s_pipeline.py --device mps --mode socket --stt whisper-mlx --llm pulsochat --tts melo --pulsochat_config_file ./pulsochat/config.json --min_speech_ms 250 --send_host localhost --recv_host localhost --recv_port 30001 --send_port 30002\\"",\
+        "useSpawn": "true",\
+        "timer": "",\
+        "winHide": false,\
+        "oldrc": false,\
+        "name": "run s2spipeline for phone3",\
+        "x": 500,\
+        "y": 1220,\
+        "wires": [\
+            [],\
+            [\
+                "adb5740711e2fc25"\
+            ],\
+            []\
+        ]\
+    \},\
+    \{\
+        "id": "109b831aeecd3732",\
+        "type": "ui_button",\
+        "z": "d750b49a.da687",\
+        "name": "",\
+        "group": "163571c0650ee235",\
+        "order": 9,\
+        "width": 0,\
+        "height": 0,\
+        "passthru": false,\
+        "label": "Launch Conversation Server For Phone 3",\
+        "tooltip": "",\
+        "color": "",\
+        "bgcolor": "",\
+        "className": "",\
+        "icon": "",\
+        "payload": "",\
+        "payloadType": "str",\
+        "topic": "",\
+        "topicType": "str",\
+        "x": 180,\
+        "y": 1200,\
+        "wires": [\
+            [\
+                "d5d90b84ab801e1c"\
+            ]\
+        ]\
+    \},\
+    \{\
+        "id": "adb5740711e2fc25",\
+        "type": "ui_template",\
+        "z": "d750b49a.da687",\
+        "group": "163571c0650ee235",\
+        "name": "",\
+        "order": 10,\
+        "width": 0,\
+        "height": 0,\
+        "format": "<div ng-bind-html=\\"msg.payload\\"></div>",\
+        "storeOutMessages": true,\
+        "fwdInMessages": true,\
+        "resendOnRefresh": true,\
+        "templateScope": "local",\
+        "className": "",\
+        "x": 720,\
+        "y": 1220,\
+        "wires": [\
+            []\
+        ]\
+    \},\
+    \{\
+        "id": "bf3d5bd1df1013e5",\
+        "type": "exec",\
+        "z": "d750b49a.da687",\
+        "command": "bash",\
+        "addpay": "",\
+        "append": "-c \\"cd /Users/damientardieu/src/speech-to-speech && source venv/bin/activate && python /Users/damientardieu/src/speech-to-speech/Sylvain/listen_and_play_route.py --recv_port 30002 --send_port 30001 --input_device_index 2 --input_channel 0 --output_device_index 3 --output_channel 4\\"",\
+        "useSpawn": "true",\
+        "timer": "",\
+        "winHide": false,\
+        "oldrc": false,\
+        "name": "run listen and play for phone3",\
+        "x": 510,\
+        "y": 1280,\
+        "wires": [\
+            [\
+                "26ac0bb7f8d3ac6e"\
+            ],\
+            [\
+                "89eee10bbfe92c84",\
+                "3dcdea46a18f9a91"\
+            ],\
+            [\
+                "f7e60f4cadaa06f7"\
+            ]\
+        ]\
+    \},\
+    \{\
+        "id": "3b1c5843e2c84a62",\
+        "type": "ui_button",\
+        "z": "d750b49a.da687",\
+        "name": "",\
+        "group": "163571c0650ee235",\
+        "order": 11,\
+        "width": 0,\
+        "height": 0,\
+        "passthru": false,\
+        "label": "Launch Audio Server For Phone 3",\
+        "tooltip": "",\
+        "color": "",\
+        "bgcolor": "",\
+        "className": "",\
+        "icon": "",\
+        "payload": "",\
+        "payloadType": "str",\
+        "topic": "",\
+        "topicType": "str",\
+        "x": 160,\
+        "y": 1280,\
+        "wires": [\
+            [\
+                "bf3d5bd1df1013e5"\
+            ]\
+        ]\
+    \},\
+    \{\
+        "id": "26ac0bb7f8d3ac6e",\
+        "type": "ui_template",\
+        "z": "d750b49a.da687",\
+        "group": "163571c0650ee235",\
+        "name": "",\
+        "order": 12,\
+        "width": 0,\
+        "height": 0,\
+        "format": "<div ng-bind-html=\\"msg.payload\\"></div>",\
+        "storeOutMessages": true,\
+        "fwdInMessages": true,\
+        "resendOnRefresh": true,\
+        "templateScope": "local",\
+        "className": "",\
+        "x": 780,\
+        "y": 1380,\
+        "wires": [\
+            []\
+        ]\
+    \},\
+    \{\
+        "id": "3dcdea46a18f9a91",\
+        "type": "debug",\
+        "z": "d750b49a.da687",\
+        "name": "debug 7",\
+        "active": true,\
+        "tosidebar": true,\
+        "console": false,\
+        "tostatus": false,\
+        "complete": "false",\
+        "statusVal": "",\
+        "statusType": "auto",\
+        "x": 760,\
+        "y": 1260,\
+        "wires": []\
+    \},\
+    \{\
+        "id": "89eee10bbfe92c84",\
+        "type": "debug",\
+        "z": "d750b49a.da687",\
+        "name": "debug 8",\
+        "active": true,\
+        "tosidebar": true,\
+        "console": false,\
+        "tostatus": false,\
+        "complete": "false",\
+        "statusVal": "",\
+        "statusType": "auto",\
+        "x": 760,\
+        "y": 1300,\
+        "wires": []\
+    \},\
+    \{\
+        "id": "f7e60f4cadaa06f7",\
+        "type": "debug",\
+        "z": "d750b49a.da687",\
+        "name": "debug 9",\
+        "active": true,\
+        "tosidebar": true,\
+        "console": false,\
+        "tostatus": false,\
+        "complete": "false",\
+        "statusVal": "",\
+        "statusType": "auto",\
+        "x": 760,\
+        "y": 1340,\
+        "wires": []\
+    \},\
+    \{\
+        "id": "4b2b776b52c1d4ca",\
+        "type": "exec",\
+        "z": "d750b49a.da687",\
+        "command": "bash",\
+        "addpay": "",\
+        "append": "-c \\"killall Python\\"",\
+        "useSpawn": "true",\
+        "timer": "",\
+        "winHide": false,\
+        "oldrc": false,\
+        "name": "killall",\
+        "x": 470,\
+        "y": 1500,\
+        "wires": [\
+            [],\
+            [\
+                "00beacc539e93e0b"\
+            ],\
+            []\
+        ]\
+    \},\
+    \{\
+        "id": "639fc676bd7683bd",\
+        "type": "ui_button",\
+        "z": "d750b49a.da687",\
+        "name": "",\
+        "group": "163571c0650ee235",\
+        "order": 13,\
+        "width": 0,\
+        "height": 0,\
+        "passthru": false,\
+        "label": "Kilall !",\
+        "tooltip": "",\
+        "color": "",\
+        "bgcolor": "red",\
+        "className": "",\
+        "icon": "",\
+        "payload": "",\
+        "payloadType": "str",\
+        "topic": "",\
+        "topicType": "str",\
+        "x": 110,\
+        "y": 1500,\
+        "wires": [\
+            [\
+                "4b2b776b52c1d4ca"\
+            ]\
+        ]\
+    \},\
+    \{\
+        "id": "00beacc539e93e0b",\
+        "type": "ui_template",\
+        "z": "d750b49a.da687",\
+        "group": "163571c0650ee235",\
+        "name": "",\
+        "order": 14,\
+        "width": 0,\
+        "height": 0,\
+        "format": "<div ng-bind-html=\\"msg.payload\\"></div>",\
+        "storeOutMessages": true,\
+        "fwdInMessages": true,\
+        "resendOnRefresh": true,\
+        "templateScope": "local",\
+        "className": "",\
+        "x": 760,\
+        "y": 1500,\
+        "wires": [\
+            []\
+        ]\
+    \},\
+    \{\
+        "id": "163571c0650ee235",\
+        "type": "ui_group",\
+        "name": "PEDRO (LOCAL)",\
+        "tab": "4e1d0acbdf98f0a7",\
+        "order": 4,\
+        "disp": true,\
+        "width": 23,\
+        "collapse": false,\
+        "className": ""\
+    \},\
+    \{\
+        "id": "4e1d0acbdf98f0a7",\
+        "type": "ui_tab",\
+        "name": "Home",\
+        "icon": "dashboard",\
+        "disabled": false,\
+        "hidden": false\
+    \}\
+]}
