@@ -4,6 +4,7 @@ from queue import Queue
 from dataclasses import dataclass, field
 import sounddevice as sd
 from transformers import HfArgumentParser
+from pythonosc import udp_client
 
 
 @dataclass
@@ -29,6 +30,10 @@ class ListenAndPlayArguments:
         metadata={"help": "The network port for receiving data. Default is 12346."},
     )
 
+osc_ip = "127.0.0.1"
+osc_port = 8000
+osc_client = udp_client.SimpleUDPClient(osc_ip, osc_port)
+
 
 def listen_and_play(
     send_rate=16000,
@@ -50,13 +55,24 @@ def listen_and_play(
     recv_queue = Queue()
     send_queue = Queue()
 
+    bot_state = {"talking": False}
+
     def callback_recv(outdata, frames, time, status):
+
         if not recv_queue.empty():
             data = recv_queue.get()
             outdata[: len(data)] = data
             outdata[len(data) :] = b"\x00" * (len(outdata) - len(data))
+            if not bot_state["talking"]:
+                print("bot starts speaking")
+                osc_client.send_message("/listen_and_play/bot_speaks", "start")
+                bot_state["talking"] = True
         else:
             outdata[:] = b"\x00" * len(outdata)
+            if bot_state["talking"]:
+                print("bot stops speaking")
+                osc_client.send_message("/listen_and_play/bot_speaks", "stop")
+                bot_state["talking"] = False
 
     def callback_send(indata, frames, time, status):
         if recv_queue.empty():
