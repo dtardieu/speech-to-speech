@@ -44,6 +44,14 @@ class ListenAndPlayArguments:
         default=0,
         metadata={"help": "Décalage canal sortie (0 => on écrit dans [0], 1 => [1], etc.)."},
     )
+    osc_ip: str = field(
+        default="localhost",
+        metadata={"help": "Le nom d'hôte ou l'adresse IP pour l'envoi OSC"},
+    )
+    osc_port: int = field(
+        default=8000,
+        metadata={"help": "Le port réseau pour l'envoi des données OSC. Par défaut 8000."},
+    )
 
 
 def listen_and_play(
@@ -57,6 +65,8 @@ def listen_and_play(
     output_device_index=1,
     input_channel=0,    # Modifié pour compatibilité avec mono
     output_channel=0,
+    osc_ip,
+    osc_port
 ):
     """
     Ouvre 1 canal en entrée (mono) et 'nb_output_channels = output_channel + 1' en sortie.
@@ -70,6 +80,10 @@ def listen_and_play(
 
     # On ouvre suffisamment de canaux en sortie pour pouvoir "poser" notre mono
     nb_output_channels = output_channel + 1  # p. ex. 2 si output_channel=1
+
+    bot_state = {"talking": False}
+
+    osc_client = udp_client.SimpleUDPClient(osc_ip, osc_port)
 
     # --- Callback de sortie (lecture) ---
     def callback_recv(outdata, frames, time_info, status):
@@ -244,4 +258,3 @@ if __name__ == "__main__":
     (listen_and_play_kwargs,) = parser.parse_args_into_dataclasses()
 
     listen_and_play(**vars(listen_and_play_kwargs))
-
