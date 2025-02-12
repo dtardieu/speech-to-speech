@@ -6,6 +6,7 @@ import time
 import numpy as np
 import sounddevice as sd
 from transformers import HfArgumentParser
+from pythonosc import udp_client
 
 
 @dataclass
@@ -44,14 +45,19 @@ class ListenAndPlayArguments:
         default=0,
         metadata={"help": "Décalage canal sortie (0 => on écrit dans [0], 1 => [1], etc.)."},
     )
+    enable_osc: bool = field(
+        default=False,
+        metadata={"help": "Enable OSC"},
+    )
     osc_ip: str = field(
-        default="localhost",
+        default="127.0.0.1",
         metadata={"help": "Le nom d'hôte ou l'adresse IP pour l'envoi OSC"},
     )
     osc_port: int = field(
         default=8000,
         metadata={"help": "Le port réseau pour l'envoi des données OSC. Par défaut 8000."},
     )
+
 
 
 def listen_and_play(
@@ -65,8 +71,9 @@ def listen_and_play(
     output_device_index=1,
     input_channel=0,    # Modifié pour compatibilité avec mono
     output_channel=0,
-    osc_ip,
-    osc_port
+    enable_osc=False,
+    osc_ip="127.0.0.1",
+    osc_port=8000
 ):
     """
     Ouvre 1 canal en entrée (mono) et 'nb_output_channels = output_channel + 1' en sortie.
@@ -81,9 +88,10 @@ def listen_and_play(
     # On ouvre suffisamment de canaux en sortie pour pouvoir "poser" notre mono
     nb_output_channels = output_channel + 1  # p. ex. 2 si output_channel=1
 
-    bot_state = {"talking": False}
+    if enable_osc:
+        osc_client = udp_client.SimpleUDPClient(osc_ip, osc_port)
 
-    osc_client = udp_client.SimpleUDPClient(osc_ip, osc_port)
+    bot_state = {"talking": False}
 
     # --- Callback de sortie (lecture) ---
     def callback_recv(outdata, frames, time_info, status):
@@ -110,10 +118,23 @@ def listen_and_play(
                 tmp[:, output_channel:output_channel+1] = data_np
 
                 outdata[:] = tmp.tobytes()
+                if not bot_state["talking"]:
+                    print("🔊 Sound started streaming")
+                    bot_state["talking"] = True
+                    if enable_osc:
+                        print("sending message")
+                        osc_client.send_message("/listen_and_play/bot_speaks", "start")
+
             else:
                 outdata[:] = b"\x00" * len(outdata)
         else:
             outdata[:] = b"\x00" * len(outdata)
+            if bot_state["talking"]:
+                print("🔇 Sound stopped streaming")
+                bot_state["talking"] = False
+                if enable_osc:
+                    osc_client.send_message("/listen_and_play/bot_speaks", "stop")
+
 
     # --- Callback d'entrée (capture) ---
     def callback_send(indata, frames, time_info, status):

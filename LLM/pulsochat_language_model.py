@@ -53,13 +53,23 @@ class PulsochatModelHandler(BaseHandler):
         language_code = None
         if isinstance(prompt, tuple):
             prompt, language_code = prompt
+
         self.chat.append({"role": "user", "content": prompt})
         logger.debug(prompt)
-        generated_text = self.client.response(prompt, self.chat.to_list())
+
+        # Call the response generator
+        response_generator = self.client.response(prompt, self.chat.to_list(), stream=True)
+
+        generated_text = ""
+        for chunk in response_generator:
+            generated_text += chunk
+            yield chunk, language_code  # Yielding chunks in streaming mode
+
         if self.osc_client:
             self.send_osc_message("/pulsochat/state", str(self.client.get_current_state()))
+
         self.chat.append({"role": "assistant", "content": generated_text})
-        yield generated_text, language_code
+
 
 
     def _handle_reset(self, address, *args):
