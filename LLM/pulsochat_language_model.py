@@ -54,7 +54,7 @@ class PulsochatModelHandler(BaseHandler):
         if isinstance(prompt, tuple):
             prompt, language_code = prompt
 
-        self.chat.append({"role": "user", "content": prompt})
+
         logger.debug(prompt)
 
         # Call the response generator
@@ -68,6 +68,7 @@ class PulsochatModelHandler(BaseHandler):
         if self.osc_client:
             self.send_osc_message("/pulsochat/state", str(self.client.get_current_state()))
 
+        self.chat.append({"role": "user", "content": prompt})
         self.chat.append({"role": "assistant", "content": generated_text})
 
 
