@@ -1,0 +1,21 @@
+{
+	"pattrstorage" : 	{
+		"name" : "u459000616",
+		"slots" : 		{
+			"1" : 			{
+				"id" : 1,
+				"data" : 				{
+					"Inter_In_Intro" : [ 4 ],
+					"Interactions_before_message" : [ 8 ],
+					"Interlink_Duration" : [ 40 ],
+					"Mess_Dur" : [ 12 ],
+					"WaitingRoomMusic" : [ 26 ]
+				}
+
+			}
+
+		}
+
+	}
+
+}

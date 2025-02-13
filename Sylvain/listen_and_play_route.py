@@ -87,6 +87,7 @@ def listen_and_play(
 
     # On ouvre suffisamment de canaux en sortie pour pouvoir "poser" notre mono
     nb_output_channels = output_channel + 1  # p. ex. 2 si output_channel=1
+    nb_input_channels = input_channel + 1  # p. ex. 2 si output_channel=1
 
     if enable_osc:
         osc_client = udp_client.SimpleUDPClient(osc_ip, osc_port)
@@ -137,12 +138,29 @@ def listen_and_play(
 
 
     # --- Callback d'entrée (capture) ---
-    def callback_send(indata, frames, time_info, status):
+    #def callback_send(indata, frames, time_info, status):
         """
         'indata' contient frames * 1 canal mono * 2 octets (int16).
         On l'envoie tel quel sur la socket (via la queue).
         """
-        send_queue.put(indata)
+    #    send_queue.put(indata)
+
+
+    def callback_send(indata, frames, time_info, status):
+        """
+        Capture l'audio, convertit les données en NumPy et sélectionne uniquement le canal voulu.
+        """
+        # Convertir les données brutes en numpy array (int16)
+        data_np = np.frombuffer(indata, dtype=np.int16)
+
+        # Reshape en (frames, nb_input_channels) pour séparer les canaux
+        data_np = data_np.reshape((frames, nb_input_channels))
+
+        # Sélectionner le canal voulu
+        selected_channel_data = data_np[:, input_channel]
+
+        # Convertir en binaire avant envoi
+        send_queue.put(selected_channel_data.tobytes())
 
     # --- Thread pour envoyer les données réseau ---
     def send_func(stop_event, send_queue, send_socket):
@@ -196,14 +214,15 @@ def listen_and_play(
                 time.sleep(3)
 
     try:
-        print(f"> Périphérique d'entrée = {input_device_index}, 1 canal (mono).")
+        print(f"> Périphérique d'entree' = {input_device_index}, "
+              f"ouverture de {nb_input_channels} canaux, flux dans [{input_channel}].")
         print(f"> Périphérique de sortie = {output_device_index}, "
               f"ouverture de {nb_output_channels} canaux, flux dans [{output_channel}].")
 
-        # -- En entrée, on lit 1 canal mono --
+        # -- En entree, on ouvre (input_channel + 1) canaux --
         send_stream = sd.RawInputStream(
             samplerate=send_rate,
-            channels=1,  # Modifié pour mono
+            channels=nb_input_channels,  # Modifié pour mono
             dtype="int16",
             blocksize=list_play_chunk_size,
             callback=callback_send,
