@@ -5,7 +5,7 @@ from typing import Optional
 @dataclass
 class WhisperSTTHandlerArguments:
     stt_model_name: str = field(
-        default="distil-whisper/distil-large-v3",
+        default="distil-whisper/large-v3",
         metadata={
             "help": "The pretrained Whisper model to use. Default is 'distil-whisper/distil-large-v3'."
         },
@@ -55,8 +55,8 @@ class WhisperSTTHandlerArguments:
     language: Optional[str] = field(
         default='en',
         metadata={
-            "help": """The language for the conversation. 
-            Choose between 'en' (english), 'fr' (french), 'es' (spanish), 
+            "help": """The language for the conversation.
+            Choose between 'en' (english), 'fr' (french), 'es' (spanish),
             'zh' (chinese), 'ko' (korean), 'ja' (japanese), 'hi' (hindi) or 'None'.
             If using 'auto', the language is automatically detected and can
             change during the conversation. Default is 'en'."""

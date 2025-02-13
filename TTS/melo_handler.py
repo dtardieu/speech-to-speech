@@ -90,7 +90,7 @@ class MeloTTSHandler(BaseHandler):
 
         try:
             audio_chunk = self.model.tts_to_file(
-                llm_sentence, self.speaker_id, quiet=True
+                llm_sentence, self.speaker_id, quiet=True, speed=1.4
             )
         except (AssertionError, RuntimeError) as e:
             logger.error(f"Error in MeloTTSHandler: {e}")

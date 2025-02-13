@@ -1,9 +1,11 @@
 import logging
 import time
 import json
+import os
 
 from nltk import sent_tokenize
 from rich.console import Console
+from google.cloud import translate_v2 as translate
 
 from baseHandler import BaseHandler
 from LLM.chat import Chat
@@ -17,7 +19,12 @@ from pulsochat.InteractionLogger import InteractionLogger
 logger = logging.getLogger(__name__)
 console = Console()
 
-CHAT_SIZE = 1000
+key_file = "/Users/dtardieu/Documents/metamorphy-266a29b4942c.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_file
+
+translate_client = translate.Client()
+
+CHAT_SIZE = 2000
 
 class PulsochatModelHandler(BaseHandler):
     def setup(
@@ -58,17 +65,19 @@ class PulsochatModelHandler(BaseHandler):
         logger.debug(prompt)
 
         # Call the response generator
-        response_generator = self.client.response(prompt, self.chat.to_list(), stream=True)
+        prompt_en=translate_client.translate(prompt, target_language="en", format_="text")["translatedText"]
+        response_generator = self.client.response(prompt_en, self.chat.to_list(), stream=True)
 
         generated_text = ""
         for chunk in response_generator:
             generated_text += chunk
-            yield chunk, language_code  # Yielding chunks in streaming mode
+            chunk_fr = translate_client.translate(chunk, target_language="fr", format_="text")["translatedText"]
+            yield chunk_fr, language_code  # Yielding chunks in streaming mode
 
         if self.osc_client:
             self.send_osc_message("/pulsochat/state", str(self.client.get_current_state()))
 
-        self.chat.append({"role": "user", "content": prompt})
+        self.chat.append({"role": "user", "content": prompt_en})
         self.chat.append({"role": "assistant", "content": generated_text})
 
 
