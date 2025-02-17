@@ -111,11 +111,6 @@ julius==0.2.7
 kaldiio==2.18.0
 keras==3.6.0
 kiwisolver==1.4.8
-langchain==0.3.4
-langchain-community==0.3.3
-langchain-core==0.3.33
-langchain-openai==0.2.3
-langchain-text-splitters==0.3.5
 langid==1.1.6
 langsmith==0.1.147
 librosa==0.9.1
@@ -165,7 +160,6 @@ proces==0.1.7
 prompt_toolkit==3.0.50
 propcache==0.2.1
 proto-plus==1.26.0
-protobuf==5.29.3
 ptyprocess==0.7.0
 pure_eval==0.2.3
 pyasn1==0.6.1
@@ -223,7 +217,6 @@ tensorboard-data-server==0.7.2
 tensorboardX==2.6.2.2
 termcolor==2.5.0
 threadpoolctl==3.5.0
-tiktoken==0.8.0
 tokenizers==0.20.3
 tomlkit==0.13.2
 torch==2.4.0

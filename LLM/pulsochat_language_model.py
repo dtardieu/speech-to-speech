@@ -19,7 +19,7 @@ from pulsochat.InteractionLogger import InteractionLogger
 logger = logging.getLogger(__name__)
 console = Console()
 
-key_file = "/Users/dtardieu/Documents/metamorphy-266a29b4942c.json"
+key_file = "/Users/damientardieu/Documents/metamorphy-266a29b4942c.json"
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_file
 
 translate_client = translate.Client()

@@ -19,7 +19,7 @@ disp = dispatcher.Dispatcher()
 #disp.map("/listen_and_play/bot_speaks", handle_bot_speaks)
 disp.set_default_handler(handle_unmatched)
 
-server = osc_server.ThreadingOSCUDPServer(("127.0.0.1", 8000), disp)
+server = osc_server.ThreadingOSCUDPServer(("10.0.0.226", 8003), disp)
 
 print("Starting test OSC receiver on port 8000...")
 try:
