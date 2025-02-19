@@ -34,7 +34,7 @@ class LightningWhisperSTTHandler(BaseHandler):
 
     def setup(
         self,
-        model_name="mlx-community/whisper-large-v3-mlx",
+        model_name="large-v3",
         device="mps",
         torch_dtype="float16",
         compile_mode=None,
@@ -44,8 +44,7 @@ class LightningWhisperSTTHandler(BaseHandler):
         if len(model_name.split("/")) > 1:
             model_name = model_name.split("/")[-1]
         self.device = device
-        print(f"----------model------ {model_name}")
-        print(f"----------language------ {language}")
+        logger.info(f"Starting LightningWhisperMLX with model {model_name}")
         self.model = LightningWhisperMLX(model=model_name, batch_size=6, quant=None)
         self.start_language = language
         self.last_language = language
