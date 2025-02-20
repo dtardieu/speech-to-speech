@@ -1,0 +1,23 @@
+{
+  "device": "mps",
+  "mode": "socket",
+  "stt": "whisper-mlx",
+  "stt_model_name": "medium",
+  "llm": "pulsochat",
+  "tts": "melo",
+  "pulsochat_config_file": "./configs/config-pulsochat-fr.json",
+  "pulsochat_log_dir": "./logs",
+  "audio_enhancement": false,
+  "min_silence_ms": 350,
+  "min_speech_ms": 350,
+  "thresh": 0.3,
+  "send_host": "localhost",
+  "recv_host": "localhost",
+  "recv_port": 30001,
+  "send_port": 30002,
+  "enable_osc": true,
+  "osc_send_port": 8003,
+  "osc_receive_port": 8013,
+  "log_level": "info",
+  "language": "fr"
+}

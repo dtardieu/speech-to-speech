@@ -13,3 +13,4 @@ deepfilternet>=0.5.6
 openai>=1.40.1
 useful-moonshine @ git+https://github.com/andimarafioti/moonshine.git
 python-osc
+google-cloud-translate
