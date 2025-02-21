@@ -19,5 +19,9 @@
   "osc_send_port": 8001,
   "osc_receive_port": 8011,
   "log_level": "info",
-  "language": "fr"
+  "language": "fr",
+  "input_device": 5,
+  "output_device": 5,
+  "input_channel": 0,
+  "output_channel": 2
 }
