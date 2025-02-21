@@ -34,7 +34,7 @@ WHISPER_LANGUAGE_TO_LLM_LANGUAGE = {
 logger = logging.getLogger(__name__)
 console = Console()
 
-key_file = "/Users/damientardieu/src/speech-to-speech/metamorphy-266a29b4942c.json"
+key_file = "./metamorphy-266a29b4942c.json"
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_file
 
 
