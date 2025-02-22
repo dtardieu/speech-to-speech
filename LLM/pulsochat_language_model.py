@@ -59,6 +59,7 @@ class PulsochatModelHandler(BaseHandler):
         # Register handlers for OSC messages
         if self.osc_server:
             self.osc_server.add_handler("/pulsochat/reset", self._handle_reset)
+            self.osc_server.add_handler("/pulsochat/state", self._handle_state)
 
         self.warmup()
 
@@ -104,10 +105,15 @@ class PulsochatModelHandler(BaseHandler):
         if self.osc_client:
             self.send_osc_message("/pulsochat/state", str(self.client.get_current_state()))
 
+
+        #TODO est-ce qu'on pourrait pas faire le logging ici plutôt ????
         self.chat.append({"role": "user", "content": prompt_en})
         self.chat.append({"role": "assistant", "content": generated_text})
 
-
+    def _handle_state(self, address, *args):
+        #TODO treat OSC state comme ça il gère l'interlink
+        # genre pendant l'interlink il arrête d'écouter....
+        logger.info("TODO treat OSC state command : ", args[0])
 
     def _handle_reset(self, address, *args):
         """
@@ -127,4 +133,5 @@ class PulsochatModelHandler(BaseHandler):
             logger.warning("ChatHandler has no reset() method.")
 
     def _reset_chat(self):
+        #TODO shut up ! stop stream ????
         self.chat.buffer = []
