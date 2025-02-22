@@ -517,6 +517,5 @@ def main():
     except KeyboardInterrupt:
         pipeline_manager.stop()
 
-
 if __name__ == "__main__":
     main()
