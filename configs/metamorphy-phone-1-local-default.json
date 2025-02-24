@@ -7,7 +7,7 @@
   "tts": "melo",
   "pulsochat_config_file": "./configs/config-pulsochat.json",
   "pulsochat_log_dir": "./logs",
-  "pulsochat_temperature": 0,
+  "pulsochat_temperature": 0.8,
   "pulsochat_top_p": 1,
   "audio_enhancement": true,
   "speech_pad_ms": 30,
