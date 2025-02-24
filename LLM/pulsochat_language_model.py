@@ -77,42 +77,45 @@ class PulsochatModelHandler(BaseHandler):
     def process(self, prompt):
         logger.debug("call api language model...")
         language_code = None
+        print(f"prompt length: {len(prompt)}")
         if isinstance(prompt, tuple):
             prompt, language_code = prompt
+        if bool(str.replace(prompt, ' ', '')):
 
 
-        logger.debug(prompt)
 
-        # Call the response generator
+            logger.debug(prompt)
 
-        if language_code != "en":
-            prompt_en = self.translate_client.translate(prompt, target_language="en", format_="text")["translatedText"]
-            #prompt_en=prompt
-        else:
-            prompt_en=prompt
+            # Call the response generator
 
-        response_generator = self.client.response(prompt_en, self.chat.to_list(), stream=True, temperature=self.temperature, top_p=self.top_p)
-
-        import time
-
-        start = time.time()
-        generated_text = ""
-        for chunk in response_generator:
-            generated_text += chunk
-            if language_code != "en-fr":
-                chunk_fr = self.translate_client.translate(chunk, target_language=language_code, format_="text")["translatedText"]
-                #chunk_fr = chunk
+            if language_code != "en":
+                prompt_en = self.translate_client.translate(prompt, target_language="en", format_="text")["translatedText"]
+                #prompt_en=prompt
             else:
-                chunk_fr=chunk
-            yield chunk_fr, language_code  # Yielding chunks in streaming mode
-        end = time.time()
-        if self.osc_client:
-            self.send_osc_message("/pulsochat/state", str(self.client.get_current_state()))
+                prompt_en=prompt
+
+            response_generator = self.client.response(prompt_en, self.chat.to_list(), stream=True, temperature=self.temperature, top_p=self.top_p)
+
+            import time
+
+            start = time.time()
+            generated_text = ""
+            for chunk in response_generator:
+                generated_text += chunk
+                if language_code != "en-fr":
+                    chunk_fr = self.translate_client.translate(chunk, target_language=language_code, format_="text")["translatedText"]
+                    #chunk_fr = chunk
+                else:
+                    chunk_fr=chunk
+                yield chunk_fr, language_code  # Yielding chunks in streaming mode
+            end = time.time()
+            if self.osc_client:
+                self.send_osc_message("/pulsochat/state", str(self.client.get_current_state()))
 
 
-        #TODO est-ce qu'on pourrait pas faire le logging ici plutôt ????
-        self.chat.append({"role": "user", "content": prompt_en})
-        self.chat.append({"role": "assistant", "content": generated_text})
+            #TODO est-ce qu'on pourrait pas faire le logging ici plutôt ????
+            self.chat.append({"role": "user", "content": prompt_en})
+            self.chat.append({"role": "assistant", "content": generated_text})
 
     def _handle_state(self, address, *args):
         #TODO treat OSC state comme ça il gère l'interlink

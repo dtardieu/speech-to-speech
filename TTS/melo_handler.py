@@ -46,9 +46,10 @@ class MeloTTSHandler(BaseHandler):
             language=WHISPER_LANGUAGE_TO_MELO_LANGUAGE[self.language], device=device
         )
         self.speaker_id = self.model.hps.data.spk2id[
-            WHISPER_LANGUAGE_TO_MELO_SPEAKER[speaker_to_id]
+            WHISPER_LANGUAGE_TO_MELO_SPEAKER[self.language]
         ]
         self.blocksize = blocksize
+        logger.info(f"Warming up {self.__class__.__name__} with language {speaker_to_id}")
         self.warmup()
 
     def warmup(self):
@@ -64,6 +65,7 @@ class MeloTTSHandler(BaseHandler):
         console.print(f"[green]ASSISTANT: {llm_sentence}")
 
         if language_code is not None and self.language != language_code:
+            console.print(f"[green]Language code: {language_code}")
             try:
                 self.model = TTS(
                     language=WHISPER_LANGUAGE_TO_MELO_LANGUAGE[language_code],

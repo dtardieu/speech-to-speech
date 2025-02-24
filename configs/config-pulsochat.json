@@ -8,5 +8,7 @@
     {"prompt": "You take the role of an alien and try to elaborate a dialogue where the alien try to understand why humans imagine things that they don't want.", "interactions": 3},
     {"prompt": "Speculate, imagine, build a scenario, a complete plot of a weird author film scenario, in the end of the conversation, you create a possible future scenario for humanity, the scenario is detailed and full of metaphors and images.", "interactions":3}
   ],
-  "question_list": []
+  "question_list": [
+    "Ahh.. enfin un humain à qui absorber un peu de données"
+  ]
 }

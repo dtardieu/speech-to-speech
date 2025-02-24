@@ -513,6 +513,10 @@ def main():
     )
 
     try:
+        fake_question = "Ahh.. enfin un humain à qui absorber un peu de données, j'ai soif, je dois prédire le future de l'humanité, mais sans un peu plus de matière, je ne peux pas lancer les pronostics à l'aveugle, l'ère des Pythies droguées est terminée, j'ai des comptes à rendre, des espaces de probabilité à calculer. Comment tu t'appelles?"
+        fake_question = "Ahh.. enfin un humain à qui absorber un peu de données"
+        fake_question="-"
+        queues_and_events["text_prompt_queue"].put((fake_question,'fr'))
         pipeline_manager.start()
     except KeyboardInterrupt:
         pipeline_manager.stop()

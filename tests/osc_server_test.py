@@ -12,16 +12,20 @@ def handle_bot_speaks(address, *args):
 def handle_unmatched(address, *args):
     print(f"Received message on {address}: {args}")
 
+def handle_reset(address, *args):
+    print(f"Received message on {address}: {args}")
 
 disp = dispatcher.Dispatcher()
 #disp.map("/pulsochat/state", handle_state)
 #disp.map("/vad_handler/speech_detected", handle_speech_detected)
 #disp.map("/listen_and_play/bot_speaks", handle_bot_speaks)
+#disp.map("/reset", handle_reset)
 disp.set_default_handler(handle_unmatched)
 
-server = osc_server.ThreadingOSCUDPServer(("10.0.0.226", 8003), disp)
+port = 8011
+server = osc_server.ThreadingOSCUDPServer(("127.0.0.1", port), disp)
 
-print("Starting test OSC receiver on port 8000...")
+print(f"Starting test OSC receiver on port {port}...")
 try:
     server.serve_forever()
 except KeyboardInterrupt:
