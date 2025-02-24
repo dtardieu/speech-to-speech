@@ -27,3 +27,18 @@ class PulsochatLanguageModelHandlerArguments:
                     "than in a single, complete response. Default is False."
         },
     )
+    pulsochat_temperature: float = field(
+        default=1.0,
+        metadata={
+            "help": "Indicates whether data should be transmitted in a continuous flow rather "
+                    "than in a single, complete response. Default is False."
+        },
+    )
+    pulsochat_top_p: float = field(
+        default=1.0,
+        metadata={
+            "help": "Indicates whether data should be transmitted in a continuous flow rather "
+                    "than in a single, complete response. Default is False."
+        },
+
+    )

@@ -34,7 +34,7 @@ WHISPER_LANGUAGE_TO_LLM_LANGUAGE = {
 logger = logging.getLogger(__name__)
 console = Console()
 
-key_file = "/Users/damientardieu/src/speech-to-speech/metamorphy-266a29b4942c.json"
+key_file = "./metamorphy-266a29b4942c.json"
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_file
 
 
@@ -47,6 +47,8 @@ class PulsochatModelHandler(BaseHandler):
         log_dir,
         api_key,
         stream,
+        temperature,
+        top_p,
         gen_kwargs={}
     ):
         with open(config_file) as f:
@@ -56,6 +58,8 @@ class PulsochatModelHandler(BaseHandler):
         self.client = ChatHandler(config, api_key, InteractionLogger(log_dir))
         self.chat = Chat(CHAT_SIZE)
         self.translate_client = translate.Client()
+        self.temperature=temperature
+        self.top_p=top_p
         # Register handlers for OSC messages
         if self.osc_server:
             self.osc_server.add_handler("/pulsochat/reset", self._handle_reset)
@@ -82,12 +86,12 @@ class PulsochatModelHandler(BaseHandler):
         # Call the response generator
 
         if language_code != "en":
-            #prompt_en = self.translate_client.translate(prompt, target_language="en", format_="text")["translatedText"]
-            prompt_en=prompt
+            prompt_en = self.translate_client.translate(prompt, target_language="en", format_="text")["translatedText"]
+            #prompt_en=prompt
         else:
             prompt_en=prompt
 
-        response_generator = self.client.response(prompt_en, self.chat.to_list(), stream=True)
+        response_generator = self.client.response(prompt_en, self.chat.to_list(), stream=True, temperature=self.temperature, top_p=self.top_p)
 
         import time
 
@@ -96,8 +100,8 @@ class PulsochatModelHandler(BaseHandler):
         for chunk in response_generator:
             generated_text += chunk
             if language_code != "en-fr":
-                #chunk_fr = self.translate_client.translate(chunk, target_language=language_code, format_="text")["translatedText"]
-                chunk_fr = chunk
+                chunk_fr = self.translate_client.translate(chunk, target_language=language_code, format_="text")["translatedText"]
+                #chunk_fr = chunk
             else:
                 chunk_fr=chunk
             yield chunk_fr, language_code  # Yielding chunks in streaming mode

@@ -251,7 +251,12 @@ def build_pipeline(
         from connections.local_audio_streamer import LocalAudioStreamer
 
         local_audio_streamer = LocalAudioStreamer(
-            input_queue=recv_audio_chunks_queue, output_queue=send_audio_chunks_queue
+            input_queue=recv_audio_chunks_queue,
+            output_queue=send_audio_chunks_queue,
+            input_device=module_kwargs.input_device,   # Input device (Microphone) index or name
+            output_device=module_kwargs.output_device,  # Output device (Speaker) index or name
+            input_channel=module_kwargs.input_channel,  # Input channel index
+            output_channel=module_kwargs.output_channel
         )
         comms_handlers = [local_audio_streamer]
         should_listen.set()
@@ -511,7 +516,6 @@ def main():
         pipeline_manager.start()
     except KeyboardInterrupt:
         pipeline_manager.stop()
-
 
 if __name__ == "__main__":
     main()

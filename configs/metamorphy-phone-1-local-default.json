@@ -7,10 +7,13 @@
   "tts": "melo",
   "pulsochat_config_file": "./configs/config-pulsochat.json",
   "pulsochat_log_dir": "./logs",
+  "pulsochat_temperature": 0,
+  "pulsochat_top_p": 1,
   "audio_enhancement": true,
-  "min_silence_ms": 300,
-  "min_speech_ms": 250,
-  "thresh": 0.3,
+  "speech_pad_ms": 30,
+  "min_silence_ms": 500,
+  "min_speech_ms": 300,
+  "thresh": 0.2,
   "send_host": "localhost",
   "recv_host": "localhost",
   "recv_port": 10001,
@@ -19,9 +22,5 @@
   "osc_send_port": 8001,
   "osc_receive_port": 8011,
   "log_level": "info",
-  "language": "fr",
-  "input_device": 5,
-  "output_device": 5,
-  "input_channel": 0,
-  "output_channel": 2
+  "language": "fr"
 }

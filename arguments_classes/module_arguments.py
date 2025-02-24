@@ -44,6 +44,31 @@ class ModuleArguments:
             "help": "Provide logging level. Example --log_level debug, default=info."
         },
     )
+    input_device: int = field(
+        default=None,
+        metadata={
+            "help": "input audio device"
+        },
+    )
+    input_channel: int = field(
+        default=0,
+        metadata={
+            "help": "input audio channel"
+        },
+    )
+    output_device: bool = field(
+        default=None,
+        metadata={
+            "help": "output audio device"
+        },
+    )
+    output_channel: bool = field(
+        default=0,
+        metadata={
+            "help": "output audio channel"
+        },
+    )
+
     enable_osc: bool = field(
         default=False,
         metadata={
