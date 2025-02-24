@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 @dataclass
 class ParlerTTSHandlerArguments:
     tts_model_name: str = field(
-        default="parler-tts/parler-mini-v1-jenny",
+        default="parler-tts/parler-tts-mini-multilingual-v1.1",
         metadata={
             "help": "The pretrained TTS model to use. Default is 'parler-tts/parler-mini-v1-jenny'."
         },

@@ -63,7 +63,7 @@ class PulsochatModelHandler(BaseHandler):
         # Register handlers for OSC messages
         if self.osc_server:
             self.osc_server.add_handler("/pulsochat/reset", self._handle_reset)
-            self.osc_server.add_handler("/pulsochat/state", self._handle_state)
+            #self.osc_server.add_handler("/pulsochat/state", self._handle_state)
 
         self.warmup()
 
@@ -80,10 +80,7 @@ class PulsochatModelHandler(BaseHandler):
         print(f"prompt length: {len(prompt)}")
         if isinstance(prompt, tuple):
             prompt, language_code = prompt
-        if bool(str.replace(prompt, ' ', '')):
-
-
-
+        if not (prompt == "" or prompt.isspace()):
             logger.debug(prompt)
 
             # Call the response generator

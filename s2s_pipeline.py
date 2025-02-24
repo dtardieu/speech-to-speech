@@ -429,6 +429,20 @@ def get_tts_handler(module_kwargs, stop_event, lm_response_queue, send_audio_chu
             setup_args=(should_listen,),
             setup_kwargs=vars(melo_tts_handler_kwargs),
         )
+    elif module_kwargs.tts == "openai":
+        try:
+            from TTS.openaitts_handler import OpenAITTSHandler
+        except RuntimeError as e:
+            logger.error(
+                "Error importing OpenAITTSHandler."
+            )
+            raise e
+        return OpenAITTSHandler(
+            stop_event,
+            queue_in=lm_response_queue,
+            queue_out=send_audio_chunks_queue,
+            setup_args=(should_listen,),
+        )
     elif module_kwargs.tts == "chatTTS":
         try:
             from TTS.chatTTS_handler import ChatTTSHandler

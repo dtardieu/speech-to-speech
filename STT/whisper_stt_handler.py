@@ -132,7 +132,7 @@ class WhisperSTTHandler(BaseHandler):
             pred_ids = self.model.generate(input_features, **gen_kwargs)
         else:
             self.last_language = language_code
-        
+
         pred_text = self.processor.batch_decode(
             pred_ids, skip_special_tokens=True, decode_with_timestamps=False
         )[0]
@@ -144,5 +144,5 @@ class WhisperSTTHandler(BaseHandler):
 
         if self.start_language == "auto":
             language_code += "-auto"
-            
+
         yield (pred_text, language_code)

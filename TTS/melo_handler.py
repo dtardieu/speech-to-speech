@@ -91,9 +91,10 @@ class MeloTTSHandler(BaseHandler):
             )  # Removing this line makes it fail more often. I'm looking into it.
 
         try:
-            audio_chunk = self.model.tts_to_file(
-                llm_sentence, self.speaker_id, quiet=True, speed=1.4
-            )
+            with torch.no_grad():
+                audio_chunk = self.model.tts_to_file(
+                    llm_sentence, self.speaker_id, quiet=True, speed=1.4
+                    )
         except (AssertionError, RuntimeError) as e:
             logger.error(f"Error in MeloTTSHandler: {e}")
             audio_chunk = np.array([])
