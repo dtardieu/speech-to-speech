@@ -5,6 +5,7 @@
   "stt_model_name": "medium",
   "llm": "pulsochat",
   "tts": "melo",
+  "melo_device":"cpu",
   "pulsochat_config_file": "./configs/config-pulsochat-fr.json",
   "pulsochat_log_dir": "./logs",
   "audio_enhancement": false,

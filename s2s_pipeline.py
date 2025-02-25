@@ -37,6 +37,8 @@ from transformers import (
 
 from utils.thread_manager import ThreadManager
 
+import sounddevice as sd
+
 # Ensure that the necessary NLTK resources are available
 try:
     nltk.data.find("tokenizers/punkt_tab")
@@ -250,11 +252,32 @@ def build_pipeline(
     if module_kwargs.mode == "local":
         from connections.local_audio_streamer import LocalAudioStreamer
 
+
+        devices = sd.query_devices()
+
+        if isinstance(module_kwargs.input_device, str):
+            for i,device in enumerate(devices):
+                if device['name'] == module_kwargs.input_device:
+                    input_device = i
+            if not input_device:
+                raise ValueError("Input device name does not exist")
+        else:
+            input_device = module_kwargs.input_device
+
+        if isinstance(module_kwargs.output_device, str):
+            for i,device in enumerate(devices):
+                if device['name'] == module_kwargs.output_device:
+                    output_device = i
+            if not input_device:
+                raise ValueError("Output device name does not exist")
+        else:
+            output_device = module_kwargs.output_device
+
         local_audio_streamer = LocalAudioStreamer(
             input_queue=recv_audio_chunks_queue,
             output_queue=send_audio_chunks_queue,
-            input_device=module_kwargs.input_device,   # Input device (Microphone) index or name
-            output_device=module_kwargs.output_device,  # Output device (Speaker) index or name
+            input_device=input_device,   # Input device (Microphone) index or name
+            output_device=output_device,  # Output device (Speaker) index or name
             input_channel=module_kwargs.input_channel,  # Input channel index
             output_channel=module_kwargs.output_channel
         )
