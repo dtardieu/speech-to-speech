@@ -3,14 +3,14 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 6,
-			"revision" : 5,
+			"minor" : 5,
+			"revision" : 8,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 34.0, 93.0, 737.0, 481.0 ],
+		"rect" : [ 852.0, 367.0, 1121.0, 537.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -359,8 +359,8 @@
 					"outlettype" : [ "", "", "", "" ],
 					"patching_rect" : [ 310.5, 526.0, 56.0, 22.0 ],
 					"restore" : 					{
-						"Inter_In_Intro" : [ 4 ],
-						"Interactions_before_message" : [ 8 ],
+						"Inter_In_Intro" : [ 3 ],
+						"Interactions_before_message" : [ 6 ],
 						"Interlink_Duration" : [ 40 ],
 						"Mess_Dur" : [ 12 ],
 						"WaitingRoomMusic" : [ 26 ]
@@ -436,7 +436,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 384.5, 173.0, 142.0, 31.0 ],
-					"text" : "shut"
+					"text" : "intro"
 				}
 
 			}
@@ -462,7 +462,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 205.5, 172.0, 142.0, 31.0 ],
-					"text" : "shut"
+					"text" : "intro"
 				}
 
 			}
@@ -585,8 +585,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 6,
-							"revision" : 5,
+							"minor" : 5,
+							"revision" : 8,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -2471,8 +2471,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 6,
-							"revision" : 5,
+							"minor" : 5,
+							"revision" : 8,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -2506,6 +2506,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"assistshowspatchername" : 0,
+						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-60",
@@ -2513,8 +2514,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 1040.5, 289.5, 109.0, 22.0 ],
-									"text" : "/pulsochat/state $1"
+									"patching_rect" : [ 1040.5, 289.5, 116.0, 22.0 ],
+									"text" : "/pulsochat/phase $1"
 								}
 
 							}
@@ -2538,9 +2539,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 595.0, 289.5, 109.0, 22.0 ],
-									"presentation_linecount" : 2,
-									"text" : "/pulsochat/state $1"
+									"patching_rect" : [ 595.0, 289.5, 116.0, 22.0 ],
+									"text" : "/pulsochat/phase $1"
 								}
 
 							}
@@ -2564,9 +2564,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 145.5, 289.5, 109.0, 22.0 ],
-									"presentation_linecount" : 2,
-									"text" : "/pulsochat/state $1"
+									"patching_rect" : [ 145.5, 289.5, 116.0, 22.0 ],
+									"text" : "/pulsochat/phase $1"
 								}
 
 							}
@@ -4270,8 +4269,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 6,
-							"revision" : 5,
+							"minor" : 5,
+							"revision" : 8,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -5031,7 +5030,7 @@
  ],
 		"dependency_cache" : [ 			{
 				"name" : "metamorphy_params.json",
-				"bootpath" : "~/Documents/GitHub/speech-to-speech/Sylvain",
+				"bootpath" : "~/src/speech-to-speech/Sylvain",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
@@ -5042,22 +5041,22 @@
 			}
 , 			{
 				"name" : "scenarioInstance.maxpat",
-				"bootpath" : "~/Documents/GitHub/speech-to-speech/Sylvain",
+				"bootpath" : "~/src/speech-to-speech/Sylvain",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "sw.maxpat",
-				"bootpath" : "~/Documents/Max 8/Projects/SndGrains/patchers",
-				"patcherrelativepath" : "../../../Max 8/Projects/SndGrains/patchers",
+				"bootpath" : "~/Library/Application Support/Cycling '74/Max 8/Examples/max-tricks/send-receive-tricks/lib",
+				"patcherrelativepath" : "../../../Library/Application Support/Cycling '74/Max 8/Examples/max-tricks/send-receive-tricks/lib",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "var.maxpat",
 				"bootpath" : "~/Library/Application Support/Cycling '74/Max 8/Examples/max-tricks/send-receive-tricks/lib",
-				"patcherrelativepath" : "../../../../Library/Application Support/Cycling '74/Max 8/Examples/max-tricks/send-receive-tricks/lib",
+				"patcherrelativepath" : "../../../Library/Application Support/Cycling '74/Max 8/Examples/max-tricks/send-receive-tricks/lib",
 				"type" : "JSON",
 				"implicit" : 1
 			}
