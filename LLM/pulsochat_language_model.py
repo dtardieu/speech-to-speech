@@ -127,6 +127,7 @@ class PulsochatModelHandler(BaseHandler):
         logger.info("Received OSC reset command. Resetting ChatHandler and Chat.")
         self._reset_chat_handler()
         self._reset_chat()
+        self.queue_in.put(('-','fr'))
 
     def _reset_chat_handler(self):
         """

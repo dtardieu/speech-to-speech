@@ -279,7 +279,9 @@ def build_pipeline(
             input_device=input_device,   # Input device (Microphone) index or name
             output_device=output_device,  # Output device (Speaker) index or name
             input_channel=module_kwargs.input_channel,  # Input channel index
-            output_channel=module_kwargs.output_channel
+            output_channel=module_kwargs.output_channel,
+            enable_osc=module_kwargs.enable_osc,
+            osc_port=module_kwargs.osc_send_port
         )
         comms_handlers = [local_audio_streamer]
         should_listen.set()
@@ -536,10 +538,10 @@ def main():
     )
 
     try:
-        fake_question = "Ahh.. enfin un humain à qui absorber un peu de données, j'ai soif, je dois prédire le future de l'humanité, mais sans un peu plus de matière, je ne peux pas lancer les pronostics à l'aveugle, l'ère des Pythies droguées est terminée, j'ai des comptes à rendre, des espaces de probabilité à calculer. Comment tu t'appelles?"
-        fake_question = "Ahh.. enfin un humain à qui absorber un peu de données"
-        fake_question="-"
-        queues_and_events["text_prompt_queue"].put((fake_question,'fr'))
+        #fake_question = "Ahh.. enfin un humain à qui absorber un peu de données, j'ai soif, je dois prédire le future de l'humanité, mais sans un peu plus de matière, je ne peux pas lancer les pronostics à l'aveugle, l'ère des Pythies droguées est terminée, j'ai des comptes à rendre, des espaces de probabilité à calculer. Comment tu t'appelles?"
+        #fake_question = "Ahh.. enfin un humain à qui absorber un peu de données"
+        #fake_question="-"
+        #queues_and_events["text_prompt_queue"].put((fake_question,'fr'))
         pipeline_manager.start()
     except KeyboardInterrupt:
         pipeline_manager.stop()

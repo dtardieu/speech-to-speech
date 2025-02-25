@@ -3,6 +3,7 @@ import sounddevice as sd
 import numpy as np
 import time
 import logging
+from pythonosc.udp_client import SimpleUDPClient
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +17,9 @@ class LocalAudioStreamer:
         input_channel=1,  # Input channel index
         output_channel=3,  # Output channel index
         list_play_chunk_size=512,
+        enable_osc=False,
+        osc_ip="127.0.0.1",
+        osc_port=8001
     ):
         self.list_play_chunk_size = list_play_chunk_size
         self.input_device = input_device
@@ -26,6 +30,12 @@ class LocalAudioStreamer:
         self.stop_event = threading.Event()
         self.input_queue = input_queue
         self.output_queue = output_queue
+        # OSC client setup
+        self.enable_osc = enable_osc
+        if self.enable_osc:
+            self.osc_client = SimpleUDPClient(osc_ip, osc_port)
+            # State tracking for OSC messages
+            self.is_playing = False  # Tracks if audio is currently playing
 
     def run(self):
         def callback(indata, outdata, frames, time, status):
@@ -36,6 +46,11 @@ class LocalAudioStreamer:
             if self.output_queue.empty():
                 self.input_queue.put(selected_input_channel.copy())  # Capture only the selected input channel
                 outdata[:] = 0  # Silence if no output available
+                # **Send "stop" OSC message if we were playing but now silent**
+                if self.is_playing and self.enable_osc:
+                    self.osc_client.send_message("/listen_and_play/bot_speaks", "stop")
+                    self.is_playing = False  # Update state
+
             else:
                 try:
                     output_data = self.output_queue.get()
@@ -47,7 +62,16 @@ class LocalAudioStreamer:
                     # Ensure all channels except the specified output channel are set to zero
                     outdata[:] = 0  # Default to silence
                     outdata[:, self.output_channel] = selected_output_channel  # Send audio to specified output channel
-
+                    # **Detect if output is non-silent**
+                    if self.enable_osc:
+                        if np.any(np.abs(selected_output_channel) > 0):  # Check if there is actual audio
+                            if not self.is_playing:  # Only send "start" if we were not playing before
+                                self.osc_client.send_message("/listen_and_play/bot_speaks", "start")
+                                self.is_playing = True  # Update state
+                        else:
+                            if self.is_playing:  # Send "stop" only if it was previously playing
+                                self.osc_client.send_message("/listen_and_play/bot_speaks", "stop")
+                                self.is_playing = False  # Update state
                 except Exception as e:
                     logger.error(f"Error processing audio output: {e}")
                     outdata[:] = 0  # Fallback to silence
