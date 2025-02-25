@@ -82,8 +82,6 @@ class PulsochatModelHandler(BaseHandler):
             prompt, language_code = prompt
         if bool(str.replace(prompt, ' ', '')):
 
-
-
             logger.debug(prompt)
 
             # Call the response generator
@@ -113,8 +111,8 @@ class PulsochatModelHandler(BaseHandler):
                 self.send_osc_message("/pulsochat/state", str(self.client.get_current_state()))
 
 
-            #TODO est-ce qu'on pourrait pas faire le logging ici plutôt ????
-            self.chat.append({"role": "user", "content": prompt_en})
+            if not prompt == "-":
+                self.chat.append({"role": "user", "content": prompt_en})
             self.chat.append({"role": "assistant", "content": generated_text})
 
     def _handle_state(self, address, *args):
