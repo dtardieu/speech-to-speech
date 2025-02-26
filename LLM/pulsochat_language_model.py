@@ -92,7 +92,7 @@ class PulsochatModelHandler(BaseHandler):
             else:
                 prompt_en=prompt
 
-            response_generator = self.client.response(prompt_en, self.chat.to_list(), stream=True, temperature=self.temperature, top_p=self.top_p)
+            response_generator = self.client.response(prompt_en, self.chat.to_list(), temperature=self.temperature, top_p=self.top_p)
 
             import time
 
@@ -117,6 +117,7 @@ class PulsochatModelHandler(BaseHandler):
 
     def _handle_state(self, address, *args):
         logger.info(f"Received OSC state command from {address} with {args[0]}")
+        self.client.set_phase(args[0])
         #TODO treat OSC state comme ça il gère l'interlink
         # genre pendant l'interlink il arrête d'écouter....
         #logger.info("TODO treat OSC state command : ", args[0])

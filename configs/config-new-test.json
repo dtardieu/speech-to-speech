@@ -1,0 +1,36 @@
+{
+  "model_name": "ft:gpt-4o-mini-2024-07-18:personal:metamorphy-2-en:Aznpq7Yr",
+  "meta_prompt": "This is a test, follow precisely the instructions",
+  "scenario": [
+    {
+      "name": "intro",
+      "question": "Question Intro",
+      "prompt": "Say: we are in state Intro"
+    },
+    {
+      "name": "talking",
+      "prompt": "Say: we are in state talking"
+    },
+    {
+      "name": "playMessage",
+      "question": "Playing the message"
+    },
+    {
+      "name": "waitingRoom",
+      "prompt": ""
+    },
+    {
+      "name": "encounter",
+      "prompt": "Say: we are in state encounter"
+    },
+    {
+      "name": "talkingEnd",
+      "prompt": "Say: we are in state talkingEnd"
+    },
+    {
+      "name": "end",
+      "Question": "Good Bye"
+    }
+
+  ]
+}
