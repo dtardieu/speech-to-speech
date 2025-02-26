@@ -21,11 +21,11 @@
     },
     {
       "name": "encounter",
-      "prompt": "To understand how the future of humanity might unfold, you simulate a meeting with an extraterrestrial, you take on the role of the extraterrestrial, to see if humans are ready to meet them or not."
+      "prompt": "Forget the previous conversation. You are an alien from another planet. Introduce yourself and discuss to check if humans are ready to meet aliens or not."
     },
     {
       "name": "talkingEnd",
-      "prompt": "Ask the human questions like: How do humans imagine the world in a hundred years? How do they imagine climate change? The sixth mass extinction? Why do humans produce scenarios they don't want to live through?."
+      "prompt": "From the previous conversation, create a prediction in one sentence that describe a possible future scenario for humanity."
     },
     {
       "name": "end",

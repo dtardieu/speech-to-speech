@@ -9,7 +9,9 @@
 					"Interactions_before_message" : [ 8 ],
 					"Interlink_Duration" : [ 40 ],
 					"Mess_Dur" : [ 12 ],
-					"WaitingRoomMusic" : [ 26 ]
+					"WaitingRoomMusic" : [ 26 ],
+					"Inter_In_encounter" : [ 4 ],
+					"Inter_In_talkingend" : [ 4 ]
 				}
 
 			}
