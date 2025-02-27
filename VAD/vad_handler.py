@@ -8,6 +8,8 @@ from rich.console import Console
 from utils.utils import int2float
 from df.enhance import enhance, init_df
 import logging
+import tempfile
+import scipy.io.wavfile
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +88,25 @@ class VADHandler(BaseHandler):
                             self.enhanced_model, self.df_state, audio_float32
                         )
                     array = enhanced.numpy().squeeze()
+                tmp_wav_path = self.save_audio_to_tmp_wav(array, self.sample_rate)
+                logger.debug(f"Temporary WAV file saved at: {tmp_wav_path}")
                 yield array
+
+
+    def save_audio_to_tmp_wav(self, audio_array, sample_rate):
+        # Create a temporary file that won't be automatically deleted
+        tmp_file = tempfile.NamedTemporaryFile(suffix='.wav', delete=False)
+        tmp_filename = tmp_file.name
+        tmp_file.close()  # Close the file so that scipy can write to it
+
+        # Write the audio array to the wav file.
+        # Note: If your audio_array is float32 and in the range [-1, 1],
+        # scipy will write it as a float file. If you prefer int16, you might
+        # want to convert it:
+        # audio_int16 = (audio_array * 32767).astype(np.int16)
+        scipy.io.wavfile.write(tmp_filename, sample_rate, audio_array)
+
+        return tmp_filename
 
     @property
     def min_time_to_debug(self):

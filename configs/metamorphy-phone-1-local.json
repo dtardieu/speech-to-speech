@@ -1,7 +1,7 @@
 {
   "device": "mps",
   "mode": "local",
-  "stt": "whisper-mlx",
+  "stt": "whisper",
   "stt_model_name": "medium",
   "llm": "pulsochat",
   "tts": "melo",
