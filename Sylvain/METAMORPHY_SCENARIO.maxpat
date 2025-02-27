@@ -542,12 +542,12 @@
 					"patching_rect" : [ 101.0, 571.0, 56.0, 22.0 ],
 					"restore" : 					{
 						"Inter_In_Intro" : [ 4 ],
-						"Inter_In_encounter" : [ 4 ],
-						"Inter_In_talkingend" : [ 4 ],
-						"Interactions_before_message" : [ 8 ],
+						"Inter_In_encounter" : [ 8 ],
+						"Inter_In_talkingend" : [ 5 ],
+						"Interactions_before_message" : [ 10 ],
 						"Interlink_Duration" : [ 40 ],
-						"Mess_Dur" : [ 16 ],
-						"WaitingRoomMusic" : [ 32 ],
+						"Mess_Dur" : [ 10 ],
+						"WaitingRoomMusic" : [ 16 ],
 						"delay_intro" : [ 0 ],
 						"waitingRoom_delay" : [ 2 ]
 					}
