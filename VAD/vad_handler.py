@@ -89,7 +89,7 @@ class VADHandler(BaseHandler):
                         )
                     array = enhanced.numpy().squeeze()
                 #tmp_wav_path = self.save_audio_to_tmp_wav(array, self.sample_rate)
-                logger.debug(f"Temporary WAV file saved at: {tmp_wav_path}")
+                #logger.info(f"Temporary WAV file saved at: {tmp_wav_path}")
                 yield array
 
 
