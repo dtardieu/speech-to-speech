@@ -11,7 +11,7 @@
   "pulsochat_temperature": 0.7,
   "pulsochat_top_p": 1,
   "audio_enhancement": false,
-  "speech_pad_ms": 1000,
+  "speech_pad_ms": 300,
   "min_silence_ms": 300,
   "min_speech_ms": 300,
   "thresh": 0.3,
