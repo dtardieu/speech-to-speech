@@ -1,6 +1,5 @@
 import torch
 
-
 class VADIterator:
     def __init__(
         self,
@@ -9,35 +8,11 @@ class VADIterator:
         sampling_rate: int = 16000,
         min_silence_duration_ms: int = 100,
         speech_pad_ms: int = 30,
-        osc_client = None
+        osc_client=None
     ):
-        """
-        Mainly taken from https://github.com/snakers4/silero-vad
-        Class for stream imitation
-
-        Parameters
-        ----------
-        model: preloaded .jit/.onnx silero VAD model
-
-        threshold: float (default - 0.5)
-            Speech threshold. Silero VAD outputs speech probabilities for each audio chunk, probabilities ABOVE this value are considered as SPEECH.
-            It is better to tune this parameter for each dataset separately, but "lazy" 0.5 is pretty good for most datasets.
-
-        sampling_rate: int (default - 16000)
-            Currently silero VAD models support 8000 and 16000 sample rates
-
-        min_silence_duration_ms: int (default - 100 milliseconds)
-            In the end of each speech chunk wait for min_silence_duration_ms before separating it
-
-        speech_pad_ms: int (default - 30 milliseconds)
-            Final speech chunks are padded by speech_pad_ms each side
-        """
-
         self.model = model
         self.threshold = threshold
         self.sampling_rate = sampling_rate
-        self.is_speaking = False
-        self.buffer = []
         self.osc_client = osc_client
 
         if sampling_rate not in [8000, 16000]:
@@ -45,8 +20,8 @@ class VADIterator:
                 "VADIterator does not support sampling rates other than [8000, 16000]"
             )
 
-        self.min_silence_samples = sampling_rate * min_silence_duration_ms / 1000
-        self.speech_pad_samples = sampling_rate * speech_pad_ms / 1000
+        self.min_silence_samples = int(sampling_rate * min_silence_duration_ms / 1000)
+        self.speech_pad_samples = int(sampling_rate * speech_pad_ms / 1000)
         self.reset_states()
 
     def reset_states(self):
@@ -54,55 +29,85 @@ class VADIterator:
         self.triggered = False
         self.temp_end = 0
         self.current_sample = 0
+        self.buffer = []           # Main speech buffer.
+        self.pre_buffer = torch.tensor([])  # Pre-padding buffer.
+        self.post_buffer = torch.tensor([]) # Post-padding buffer.
 
     @torch.no_grad()
     def __call__(self, x):
-        """
-        x: torch.Tensor
-            audio chunk (see examples in repo)
-
-        return_seconds: bool (default - False)
-            whether return timestamps in seconds (default - samples)
-        """
-
         if not torch.is_tensor(x):
             try:
                 x = torch.Tensor(x)
             except Exception:
-                raise TypeError("Audio cannot be casted to tensor. Cast it manually")
+                raise TypeError("Audio cannot be cast to tensor. Cast it manually")
 
-        window_size_samples = len(x[0]) if x.dim() == 2 else len(x)
+        window_size_samples = x.shape[0]
         self.current_sample += window_size_samples
 
+        # Update pre_buffer: keep the last speech_pad_samples worth of audio.
+        if self.pre_buffer.numel() == 0:
+            self.pre_buffer = x.clone()
+        else:
+            self.pre_buffer = torch.cat((self.pre_buffer, x))
+        if self.pre_buffer.numel() > self.speech_pad_samples:
+            self.pre_buffer = self.pre_buffer[-self.speech_pad_samples:]
+
+        # Obtain speech probability.
         speech_prob = self.model(x, self.sampling_rate).item()
 
-        if (speech_prob >= self.threshold) and self.temp_end:
+        # If speech resumes, clear the post_buffer.
+        if speech_prob >= self.threshold and self.temp_end:
+            # This means we had a dip but speech came back.
+            if self.post_buffer.numel() > 0:
+                # Incorporate any transitional audio back into the main buffer.
+                self.buffer.append(self.post_buffer.clone())
+                self.post_buffer = torch.tensor([])
             self.temp_end = 0
 
-        if (speech_prob >= self.threshold) and not self.triggered:
+        # If speech is just starting.
+        if speech_prob >= self.threshold and not self.triggered:
             if self.osc_client:
                 self.osc_client.send_message("/vad_handler/speech_detected", "start")
             print("------------------- start of speech detected ----------------")
             self.triggered = True
+            # Start with the pre-buffer for pre-padding.
+            self.buffer = [self.pre_buffer.clone()]
+            # Clear any old post-buffer.
+            self.post_buffer = torch.tensor([])
             return None
 
-        if (speech_prob < self.threshold - 0.15) and self.triggered:
-            if not self.temp_end:
-                self.temp_end = self.current_sample
-            if self.current_sample - self.temp_end < self.min_silence_samples:
-                return None
-            else:
-                # end of speak
-                if self.osc_client:
-                    self.osc_client.send_message("/vad_handler/speech_detected", "stop")
-                print("------------------- end of speech detected ----------------")
-                self.temp_end = 0
-                self.triggered = False
-                spoken_utterance = self.buffer
-                self.buffer = []
-                return spoken_utterance
-
+        # If in an active speech segment:
         if self.triggered:
-            self.buffer.append(x)
-
+            # If the probability is below threshold (even if it's above threshold - 0.15),
+            # accumulate into post_buffer.
+            if speech_prob < self.threshold:
+                # Begin tracking the moment we started to lose confidence.
+                if not self.temp_end:
+                    self.temp_end = self.current_sample
+                self.post_buffer = torch.cat((self.post_buffer, x))
+                # Check if enough silence has been observed.
+                if self.current_sample - self.temp_end >= self.min_silence_samples:
+                    # Once enough silence, take post_buffer as padding.
+                    if self.post_buffer.numel() >= self.speech_pad_samples:
+                        pad_chunk = self.post_buffer[:self.speech_pad_samples]
+                    else:
+                        pad_chunk = self.post_buffer.clone()
+                    self.buffer.append(pad_chunk)
+                    if self.osc_client:
+                        self.osc_client.send_message("/vad_handler/speech_detected", "stop")
+                    print("------------------- end of speech detected ----------------")
+                    utterance = self.buffer
+                    self.reset_states()
+                    return utterance
+                else:
+                    # Not enough silence yet; wait.
+                    return None
+            else:
+                # If speech probability is back above threshold,
+                # then the current chunk is considered active speech.
+                # If we had accumulated any transitional (post) audio, add it to the main buffer.
+                if self.post_buffer.numel() > 0:
+                    self.buffer.append(self.post_buffer.clone())
+                    self.post_buffer = torch.tensor([])
+                self.buffer.append(x)
         return None
