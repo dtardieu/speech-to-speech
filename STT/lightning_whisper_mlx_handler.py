@@ -86,7 +86,7 @@ class LightningWhisperSTTHandler(BaseHandler):
         torch.mps.empty_cache()
 
         #console.print(f"STT RESULT _{pred_text}_")
-        if pred_text != "" and pred_text != " " and pred_text != "THANKS" and pred_text != "THANKS."and pred_text != "Merci" and pred_text != "Merci.":
+        if pred_text != "" and pred_text != " " and pred_text != "THANKS" and pred_text != "THANKS."and pred_text != "Merci" and pred_text != "Merci." and pred_text != "Sous-titrage ST' 501":
             logger.debug("finished whisper inference")
             console.print(f"[yellow]USER: {pred_text}")
             logger.debug(f"Language Code Whisper: {language_code}")
