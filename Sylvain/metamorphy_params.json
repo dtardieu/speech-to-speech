@@ -6,12 +6,12 @@
 				"id" : 1,
 				"data" : 				{
 					"Inter_In_Intro" : [ 4 ],
-					"Inter_In_encounter" : [ 8 ],
-					"Inter_In_talkingend" : [ 5 ],
+					"Inter_In_encounter" : [ 7 ],
+					"Inter_In_talkingend" : [ 4 ],
 					"Interactions_before_message" : [ 10 ],
 					"Interlink_Duration" : [ 40 ],
 					"Mess_Dur" : [ 10 ],
-					"WaitingRoomMusic" : [ 16 ],
+					"WaitingRoomMusic" : [ 15 ],
 					"delay_intro" : [ 0 ],
 					"waitingRoom_delay" : [ 2 ]
 				}

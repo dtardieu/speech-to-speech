@@ -542,12 +542,12 @@
 					"patching_rect" : [ 101.0, 571.0, 56.0, 22.0 ],
 					"restore" : 					{
 						"Inter_In_Intro" : [ 4 ],
-						"Inter_In_encounter" : [ 8 ],
-						"Inter_In_talkingend" : [ 5 ],
+						"Inter_In_encounter" : [ 7 ],
+						"Inter_In_talkingend" : [ 4 ],
 						"Interactions_before_message" : [ 10 ],
 						"Interlink_Duration" : [ 40 ],
 						"Mess_Dur" : [ 10 ],
-						"WaitingRoomMusic" : [ 16 ],
+						"WaitingRoomMusic" : [ 15 ],
 						"delay_intro" : [ 0 ],
 						"waitingRoom_delay" : [ 2 ]
 					}
@@ -8049,7 +8049,8 @@
 			}
  ],
 		"autosave" : 0,
-		"bgcolor" : [ 0.490196078431373, 0.490196078431373, 0.490196078431373, 1.0 ]
+		"bgcolor" : [ 0.411764705882353, 0.411764705882353, 0.411764705882353, 1.0 ],
+		"editing_bgcolor" : [ 0.898039215686275, 0.898039215686275, 0.898039215686275, 1.0 ]
 	}
 
 }

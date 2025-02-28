@@ -5,3 +5,6 @@ cache
 *.txt
 /mlx_models
 Sylvain/MetamorPhone_AUDIO_ROUTER2 Project/Backup/*
+Sylvain/OLD/*
+Sylvain/MetamorPhone_AUDIO_ROUTER Project/*
+tests/*
