@@ -542,12 +542,12 @@
 					"patching_rect" : [ 101.0, 571.0, 56.0, 22.0 ],
 					"restore" : 					{
 						"Inter_In_Intro" : [ 4 ],
-						"Inter_In_encounter" : [ 7 ],
+						"Inter_In_encounter" : [ 6 ],
 						"Inter_In_talkingend" : [ 4 ],
-						"Interactions_before_message" : [ 10 ],
+						"Interactions_before_message" : [ 8 ],
 						"Interlink_Duration" : [ 40 ],
 						"Mess_Dur" : [ 10 ],
-						"WaitingRoomMusic" : [ 15 ],
+						"WaitingRoomMusic" : [ 13 ],
 						"delay_intro" : [ 0 ],
 						"waitingRoom_delay" : [ 2 ]
 					}
@@ -7461,7 +7461,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 410.5, 121.0, 75.0, 35.0 ],
+									"patching_rect" : [ 410.5, 121.0, 75.0, 22.0 ],
 									"text" : "NO_ONE"
 								}
 

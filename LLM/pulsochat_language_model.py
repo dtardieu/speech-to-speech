@@ -77,7 +77,7 @@ class PulsochatModelHandler(BaseHandler):
     def process(self, prompt):
         logger.debug("call api language model...")
         language_code = None
-        print(f"prompt length: {len(prompt)}")
+        #print(f"prompt length: {len(prompt)}")
         if isinstance(prompt, tuple):
             prompt, language_code = prompt
         if bool(str.replace(prompt, ' ', '')):

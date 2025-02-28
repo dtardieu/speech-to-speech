@@ -85,11 +85,15 @@ class LightningWhisperSTTHandler(BaseHandler):
         language_code = transcription_dict["language"]
         torch.mps.empty_cache()
 
-        logger.debug("finished whisper inference")
-        console.print(f"[yellow]USER: {pred_text}")
-        logger.debug(f"Language Code Whisper: {language_code}")
-
-        if self.start_language == "auto":
-            language_code += "-auto"
-
-        yield (pred_text, language_code)
+        console.print(f"STT RESULT _{pred_text}_")
+        if pred_text != "" and pred_text != " " and pred_text != "THANKS" and pred_text != "THANKS."and pred_text != "Merci" and pred_text != "Merci.":
+            logger.debug("finished whisper inference")
+            console.print(f"[yellow]USER: {pred_text}")
+            logger.debug(f"Language Code Whisper: {language_code}")
+            
+            if self.start_language == "auto":
+                language_code += "-auto"
+                
+            yield (pred_text, language_code)
+        else:
+            console.print(f"STT ERROR : {pred_text}")
