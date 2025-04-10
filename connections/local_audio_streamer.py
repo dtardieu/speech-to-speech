@@ -35,7 +35,7 @@ class LocalAudioStreamer:
         if self.enable_osc:
             self.osc_client = SimpleUDPClient(osc_ip, osc_port)
             # State tracking for OSC messages
-            self.is_playing = False  # Tracks if audio is currently playing
+        self.is_playing = False  # Tracks if audio is currently playing
 
     def run(self):
         def callback(indata, outdata, frames, time, status):
