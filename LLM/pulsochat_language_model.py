@@ -1,42 +1,28 @@
-import logging
+import os
 import time
 import json
-import os
-
-from nltk import sent_tokenize
-from rich.console import Console
+import logging
+from nltk.tokenize import sent_tokenize
 from google.cloud import translate_v2 as translate
-
+import openai
 from baseHandler import BaseHandler
+
 from LLM.chat import Chat
-import requests
-
-from pulsochat.ChatHandler import ChatHandler
-from pulsochat.ConfigManager import ConfigManager
 from pulsochat.InteractionLogger import InteractionLogger
-
-WHISPER_LANGUAGE_TO_LLM_LANGUAGE = {
-    "en": "english",
-    "fr": "french",
-    "es": "spanish",
-    "zh": "chinese",
-    "ja": "japanese",
-    "ko": "korean",
-    "hi": "hindi",
-    "de": "german",
-    "pt": "portuguese",
-    "pl": "polish",
-    "it": "italian",
-    "nl": "dutch",
-}
-
+from utils.scenario_manager import ScenarioManager
+from utils.osc_manager import OSCManager
 
 logger = logging.getLogger(__name__)
-console = Console()
 
 key_file = "./metamorphy-266a29b4942c.json"
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_file
 
+WHISPER_LANGUAGE_TO_LLM_LANGUAGE = {
+    "en": "english", "fr": "french", "es": "spanish",
+    "zh": "chinese", "ja": "japanese", "ko": "korean",
+    "hi": "hindi", "de": "german", "pt": "portuguese",
+    "pl": "polish", "it": "italian", "nl": "dutch"
+}
 
 CHAT_SIZE = 2000
 
@@ -54,92 +40,99 @@ class PulsochatModelHandler(BaseHandler):
         with open(config_file) as f:
             config = json.load(f)
 
-        self.stream = stream
-        self.client = ChatHandler(config, api_key, InteractionLogger(log_dir))
+        self.scenario_manager = ScenarioManager(config, InteractionLogger(log_dir))
         self.chat = Chat(CHAT_SIZE)
         self.translate_client = translate.Client()
-        self.temperature=temperature
-        self.top_p=top_p
-        # Register handlers for OSC messages
+        self.stream = stream
+        self.temperature = temperature
+        self.top_p = top_p
+        self.queue_in = None
+
         if self.osc_server:
-            self.osc_server.add_handler("/pulsochat/reset", self._handle_reset)
-            self.osc_server.add_handler("/pulsochat/phase", self._handle_state)
+            self.osc_manager = OSCManager(self.osc_server, self.osc_client)
+            self.osc_manager.setup_handlers(self._handle_reset, self._handle_state)
+        else:
+            self.osc_manager = None
+        self.client = openai.OpenAI()
+        self.model_name = config.get("model_name")
+        print(self.model_name)
 
         self.warmup()
 
     def warmup(self):
-        logger.info(f"Warming up {self.__class__.__name__}")
+        logger.info("Warming up LLM")
         start = time.time()
-        result = self.client.response("Hello!")
-        end = time.time()
-        logger.info(f"{self.__class__.__name__}: warmed up in {(end - start):.3f}s")
+        _ = self.client.chat.completions.create(
+            model=self.model_name,
+            messages=[{"role": "user", "content": "Hello"}]
+        )
+        logger.info(f"Warmup done in {time.time() - start:.2f}s")
 
-    def process(self, prompt):
-        logger.debug("call api language model...")
-        language_code = None
-        print(f"prompt length: {len(prompt)}")
-        if isinstance(prompt, tuple):
-            prompt, language_code = prompt
-        if bool(str.replace(prompt, ' ', '')):
+    def _translate(self, text, target):
+        return self.translate_client.translate(text, target_language=target, format_="text")["translatedText"]
 
-            logger.debug(prompt)
+    def process(self, prompt_tuple):
+        prompt, language_code = prompt_tuple if isinstance(prompt_tuple, tuple) else (prompt_tuple, "en")
 
-            # Call the response generator
+        if not prompt.strip():
+            return
 
-            if language_code != "en":
-                prompt_en = self.translate_client.translate(prompt, target_language="en", format_="text")["translatedText"]
-                #prompt_en=prompt
-            else:
-                prompt_en=prompt
-
-            response_generator = self.client.response(prompt_en, self.chat.to_list(), temperature=self.temperature, top_p=self.top_p)
-
-            import time
-
-            start = time.time()
-            generated_text = ""
-            for chunk in response_generator:
-                generated_text += chunk
-                if language_code != "en-fr":
-                    chunk_fr = self.translate_client.translate(chunk, target_language=language_code, format_="text")["translatedText"]
-                    #chunk_fr = chunk
-                else:
-                    chunk_fr=chunk
-                yield chunk_fr, language_code  # Yielding chunks in streaming mode
-            end = time.time()
-            if self.osc_client:
-                self.send_osc_message("/pulsochat/state", str(self.client.get_current_state()))
+        if language_code != "en":
+            prompt_en = self._translate(prompt, "en")
+        else:
+            prompt_en = prompt
 
 
-            if not prompt == "-":
-                self.chat.append({"role": "user", "content": prompt_en})
-            self.chat.append({"role": "assistant", "content": generated_text})
+        if self.scenario_manager.has_question():
+            question = self.scenario_manager.get_question()
+            self.scenario_manager.mark_question_asked()
+            self.scenario_manager.increment_interactions()
+            yield self._translate(question, language_code), language_code
+            return
 
-    def _handle_state(self, address, *args):
-        logger.info(f"Received OSC state command from {address} with {args[0]}")
-        self.client.set_phase(args[0])
-        #TODO treat OSC state comme ça il gère l'interlink
-        # genre pendant l'interlink il arrête d'écouter....
-        #logger.info("TODO treat OSC state command : ", args[0])
+        messages = [{"role": "system", "content": self.scenario_manager.meta_prompt}]
+        messages.extend(self.chat.to_list())
+        messages.append({"role": "user", "content": prompt_en})
+
+        response_obj = self.client.chat.completions.create(
+            model=self.model_name,
+            messages=messages,
+            stream=True,
+            temperature=self.temperature,
+            top_p=self.top_p
+        )
+
+        generated_text = ""
+        buffer = ""
+
+        for chunk in response_obj:
+            delta = chunk.choices[0].delta.content or ""
+            generated_text += delta
+            buffer += delta
+
+            sentences = sent_tokenize(buffer)
+            if len(sentences) > 1:
+                for sentence in sentences[:-1]:
+                    yield self._translate(sentence, language_code), language_code
+                buffer = sentences[-1]
+
+        if buffer:
+            yield self._translate(buffer, language_code), language_code
+
+        self.chat.append({"role": "user", "content": prompt_en})
+        self.chat.append({"role": "assistant", "content": generated_text})
+        self.scenario_manager.increment_interactions()
+        if self.osc_manager:
+            self.osc_manager.send_state(self.scenario_manager.get_interactions())
 
     def _handle_reset(self, address, *args):
-        """
-        OSC handler for the reset command.
-        """
-        logger.info("Received OSC reset command. Resetting ChatHandler and Chat.")
-        self._reset_chat_handler()
-        self._reset_chat()
-        self.queue_in.put(('-','fr'))
-
-    def _reset_chat_handler(self):
-        """
-        Invoke the ChatHandler's reset logic, if available.
-        """
-        if hasattr(self.client, "reset"):
-            self.client.reset()
-        else:
-            logger.warning("ChatHandler has no reset() method.")
-
-    def _reset_chat(self):
-        #TODO shut up ! stop stream ????
+        logger.info("Resetting chat and scenario")
         self.chat.buffer = []
+        self.scenario_manager.reset()
+        if self.queue_in:
+            self.queue_in.put(("-", "fr"))
+
+    def _handle_state(self, address, *args):
+        phase_name = args[0]
+        logger.info(f"Setting phase to: {phase_name}")
+        self.scenario_manager.set_phase(phase_name)
