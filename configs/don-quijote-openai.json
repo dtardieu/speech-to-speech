@@ -1,0 +1,19 @@
+{
+  "device": "mps",
+  "mode": "local",
+  "stt": "whisper-mlx",
+  "stt_model_name": "medium",
+  "llm": "open_api",
+  "open_api_model_name": "ft:gpt-4o-mini-2024-07-18:personal:quijote-10interactions:AwdjqM6t",
+  "open_api_stream": true,
+  "tts": "melo",
+  "melo_device":"cpu",
+  "audio_enhancement": true,
+  "speech_pad_ms": 100,
+  "min_silence_ms": 300,
+  "min_speech_ms": 300,
+  "thresh": 0.2,
+  "enable_osc": false,
+  "log_level": "info",
+  "language": "es"
+}

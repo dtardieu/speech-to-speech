@@ -1,0 +1,21 @@
+{
+  "device": "mps",
+  "mode": "local",
+  "stt": "whisper-mlx",
+  "stt_model_name": "medium",
+  "llm": "open_api",
+  "open_api_model_name": "metastyle_unsloth-Phi-3.5-mini-instruct_16_4_0.0001_16_2",
+  "open_api_stream": true,
+  "open_api_base_url": "http://localhost:1234/v1",
+  "open_api_init_chat_prompt": "continue the sentence in the style of Metamorphy",
+  "tts": "melo",
+  "melo_device":"cpu",
+  "audio_enhancement": true,
+  "speech_pad_ms": 100,
+  "min_silence_ms": 300,
+  "min_speech_ms": 300,
+  "thresh": 0.2,
+  "enable_osc": false,
+  "log_level": "info",
+  "language": "en"
+}

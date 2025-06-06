@@ -67,38 +67,55 @@ class OpenApiModelHandler(BaseHandler):
             f"{self.__class__.__name__}:  warmed up! time: {(end - start):.3f} s"
         )
     def process(self, prompt):
-            logger.debug("call api language model...")
-            self.chat.append({"role": self.user_role, "content": prompt})
+        logger.debug("call api language model...")
 
-            language_code = None
-            if isinstance(prompt, tuple):
-                prompt, language_code = prompt
-                if language_code[-5:] == "-auto":
-                    language_code = language_code[:-5]
-                    prompt = f"Please reply to my message in {WHISPER_LANGUAGE_TO_LLM_LANGUAGE[language_code]}. " + prompt
-            
-            response = self.client.chat.completions.create(
-                model=self.model_name,
-                messages=[
-                    {"role": self.user_role, "content": prompt},
-                ],
-                stream=self.stream
-            )
-            if self.stream:
-                generated_text, printable_text = "", ""
-                for chunk in response:
-                    new_text = chunk.choices[0].delta.content or ""
-                    generated_text += new_text
-                    printable_text += new_text
-                    sentences = sent_tokenize(printable_text)
-                    if len(sentences) > 1:
-                        yield sentences[0], language_code
-                        printable_text = new_text
-                self.chat.append({"role": "assistant", "content": generated_text})
-                # don't forget last sentence
-                yield printable_text, language_code
-            else:
-                generated_text = response.choices[0].message.content
-                self.chat.append({"role": "assistant", "content": generated_text})
-                yield generated_text, language_code
+        # 1. If prompt is a (text, language_code) tuple, extract and handle "-auto" logic.
+        language_code = None
+        if isinstance(prompt, tuple):
+            prompt, language_code = prompt
+            if language_code.endswith("-auto"):
+                language_code = language_code[:-5]
+                # prepend the translation instruction to the prompt text
+                prompt = f"Please reply to my message in {WHISPER_LANGUAGE_TO_LLM_LANGUAGE[language_code]}. " + prompt
 
+        # 2. Append the new user message (with any translation‐prefix) to the Chat buffer
+        self.chat.append({"role": self.user_role, "content": prompt})
+
+        # 3. Build the messages payload from the entire history (including init_chat_message, if set)
+        messages_payload = self.chat.to_list()
+
+        # 4. Call the model with streaming enabled
+        response = self.client.chat.completions.create(
+            model=self.model_name,
+            messages=messages_payload,
+            stream=True
+        )
+        print(messages_payload)
+        if self.stream:
+            generated_text = ""
+            printable_buffer = ""
+            for chunk in response:
+                new_delta = chunk.choices[0].delta.content or ""
+                generated_text += new_delta
+                printable_buffer += new_delta
+
+                # Once we detect at least one full sentence, yield it
+                sentences = sent_tokenize(printable_buffer)
+                if len(sentences) > 1:
+                    # yield the first complete sentence
+                    yield sentences[0], language_code
+                    # remove that sentence from printable_buffer
+                    printable_buffer = printable_buffer[len(sentences[0]):]
+
+            # After streaming ends, whatever remains is the final (partial or full) sentence
+            if printable_buffer.strip():
+                yield printable_buffer, language_code
+
+            # 5. Finally append the assistant’s full response to chat history
+            self.chat.append({"role": "assistant", "content": generated_text})
+
+        else:
+            # (This branch only happens if self.stream == False)
+            full_response = response.choices[0].message.content
+            self.chat.append({"role": "assistant", "content": full_response})
+            yield full_response, language_code
